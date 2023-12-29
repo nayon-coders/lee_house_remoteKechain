@@ -21,6 +21,7 @@ import '../../viewController/appNetworkImage.dart';
 
 class Menu extends StatefulWidget {
   final String? fromWhere;
+
   const Menu({Key? key, this.fromWhere}) : super(key: key);
 
   @override
@@ -30,6 +31,7 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   //////////// initially set res info string ////////////
   var resId, resName;
+
   //////////// initially set res info string ////////////
 
   bool isDelivery = true;
@@ -41,7 +43,6 @@ class _MenuState extends State<Menu> {
   List<MenuitemSet> menuItemsList = [];
   List<MenuitemSet> categoryMenuItemList = [];
   List _seletedFav = [];
-
 
   ///assign
   bool isLoading = false;
@@ -55,20 +56,19 @@ class _MenuState extends State<Menu> {
     getFoodMenuFuture = getData();
 
     //set pic and delivery option
-    if(widget.fromWhere != null){
-      if(widget.fromWhere == "delivery"){
+    if (widget.fromWhere != null) {
+      if (widget.fromWhere == "delivery") {
         isDelivery = true;
         isPickup = false;
-      }else{
+      } else {
         isDelivery = false;
         isPickup = true;
       }
     }
-
-
   }
 
   Future<MenuModel>? getFoodMenuFuture;
+
   Future<MenuModel> getData() async {
     var res = await MenuControllers.getSingleResturent("${AppConst.LOCATON_ID}");
     _seletedMainMenu.clear();
@@ -76,11 +76,41 @@ class _MenuState extends State<Menu> {
 
     ///////////// i just added hole category list into this list child list ////////
     for (var i = 0; i < res!.results![0]!.categorySet!.length; i++) {
-      categorySet.add(res!.results![0]!.categorySet![i]);
-      menuItemsList.add(res!.results![0]!.menuitemSet![i]);
+      setState(() {
+        categorySet.add(res!.results![0]!.categorySet![i]);
+        _seletedMenuId.add(categorySet[0].name.toString());
+      });
+
+      print("categorySet ===== ${categorySet.length}");
     }
     ///////////// i just added hole category list into this list child list ////////
 
+
+    ///////////// Add menu set  ////////
+    /// For loop to store menu item set
+    for(var i = 0; i < res.results![0]!.menuitemSet!.length; i++){
+      setState(() {
+        menuItemsList.add(res.results![0]!.menuitemSet![i]);
+      });
+      print("menuItemsList ===== ${menuItemsList.length}");
+    }
+
+    //set menuSetItemsId
+    for (var i = 0; i < categorySet[0].menuitemSet!.length; i++) {
+      setState(() {
+        menuSetItemsId.add(categorySet[0].menuitemSet![i].toString());
+      });
+    }
+
+
+    //sem categoryMenuItemList
+    for (var menuSetItems = 0; menuSetItems < menuItemsList.length; menuSetItems++) {
+      if (menuSetItemsId.contains("${menuItemsList[menuSetItems].id}")) {
+        setState(() {
+          categoryMenuItemList.add(menuItemsList[menuSetItems]);
+        });
+      }
+    }
     //============================ store resid and resname =========================//
     if (categorySet.isNotEmpty) {
       resId = categorySet[0].restaurant.toString();
@@ -98,10 +128,12 @@ class _MenuState extends State<Menu> {
 
   /////////// selected menu ids/////////////
   List _seletedMenuId = [];
+
   /////////// selected menu ids/////////////
 
   /////////// selected menu ids/////////////
   List _seletedMainMenu = [];
+
   /////////// selected menu ids/////////////
 
   List<CategorySet> categorySet = [];
@@ -130,9 +162,9 @@ class _MenuState extends State<Menu> {
               width: size.width * .32,
               margin: const EdgeInsets.only(top: 30, bottom: 30),
               decoration: BoxDecoration(
-                  color: const Color(0xffA1C298),
-                  borderRadius: BorderRadius.circular(100),
-                 ),
+                color: const Color(0xffA1C298),
+                borderRadius: BorderRadius.circular(100),
+              ),
               child: isDelivery
                   ? DeliveryButtonMenu(
                       size: size,
@@ -183,9 +215,9 @@ class _MenuState extends State<Menu> {
                 margin: EdgeInsets.only(top: 30, bottom: 30),
                 padding: EdgeInsets.only(left: 10, right: 10),
                 decoration: BoxDecoration(
-                    color: AppColors.mainColor,
-                    borderRadius: BorderRadius.circular(100),
-                   ),
+                  color: AppColors.mainColor,
+                  borderRadius: BorderRadius.circular(100),
+                ),
                 child: Stack(
                   children: [
                     Positioned(
@@ -224,7 +256,8 @@ class _MenuState extends State<Menu> {
                               child: Center(
                                 child: Text(
                                   "${dataList.length}",
-                                  style: const TextStyle(color: AppColors.mainColor),
+                                  style: const TextStyle(
+                                      color: AppColors.mainColor),
                                 ),
                               ),
                             ),
@@ -317,28 +350,26 @@ class _MenuState extends State<Menu> {
                             /////when click main menu clear the first menuSetItemsId name//////
                             menuSetItemsId.clear();
 
+                            //when click main menu clear the menuItemsList
+                            menuItemsList.clear();
+
                             /////when click main menu clear the first categoryMenuItemList name//////
                             categoryMenuItemList.clear();
-                            _seletedMainMenu.add(snapshot
-                                .data!.results![mainMenuIndex]!.id
-                                .toString());
+                            _seletedMainMenu.add(snapshot.data!.results![mainMenuIndex]!.id.toString());
                             setState(() {
                               ///////////// i just added hole category list into this list child list ////////
-                              for (var i = 0;
-                                  i <
-                                      snapshot.data!.results![mainMenuIndex]!
-                                          .categorySet!.length;
-                                  i++) {
-                                categorySet.add(snapshot.data!
-                                    .results![mainMenuIndex]!.categorySet![i]);
-                                menuItemsList.add(snapshot.data!
-                                    .results![mainMenuIndex]!.menuitemSet![i]);
-
+                              for (var i = 0; i < snapshot.data!.results![mainMenuIndex]!.categorySet!.length; i++) {
+                                categorySet.add(snapshot.data!.results![mainMenuIndex]!.categorySet![i]);
                                 /////when click main menu add the first categoryMenuItemList name//////
                                 // categoryMenuItemList.add(menuItemsList[0]);
                                 /////when click main menu add the first catetgory name//////
-                                _seletedMenuId
-                                    .add(categorySet[0].name.toString());
+
+                                print("menuItemsList by click cat === ${menuItemsList.length}");
+                                _seletedMenuId.add(categorySet[0].name.toString());
+                              }
+
+                              for(var i = 0; i < snapshot.data!.results![mainMenuIndex]!.menuitemSet!.length; i++){
+                                menuItemsList.add(snapshot.data!.results![mainMenuIndex]!.menuitemSet![i]);
                               }
 
                               //============================ store resid and resname =========================//
@@ -353,25 +384,17 @@ class _MenuState extends State<Menu> {
                               Future.delayed(Duration(milliseconds: 100), () {
                                 //// category set i get
                                 ////// i get menuSetId set from category set
-                                for (var i = 0;
-                                    i < categorySet[0].menuitemSet!.length;
-                                    i++) {
+                                for (var i = 0; i < categorySet[0].menuitemSet!.length; i++) {
                                   setState(() {
-                                    menuSetItemsId.add(categorySet[0]
-                                        .menuitemSet![i]
-                                        .toString());
+                                    menuSetItemsId.add(categorySet[0].menuitemSet![i].toString());
                                   });
                                 }
 
                                 //// ============== add menu item list in to sidecategory item list ========//
-                                for (var menuSetItems = 0;
-                                    menuSetItems < menuItemsList.length;
-                                    menuSetItems++) {
-                                  if (menuSetItemsId.contains(
-                                      "${menuItemsList[menuSetItems].id}")) {
+                                for (var menuSetItems = 0; menuSetItems < menuItemsList.length; menuSetItems++) {
+                                  if (menuSetItemsId.contains("${menuItemsList[menuSetItems].id}")) {
                                     setState(() {
-                                      categoryMenuItemList
-                                          .add(menuItemsList[menuSetItems]);
+                                      categoryMenuItemList.add(menuItemsList[menuSetItems]);
                                     });
                                     // print("hive === topcategoru ${categoryMenuItemList[4].id}");
                                     //
@@ -452,10 +475,8 @@ class _MenuState extends State<Menu> {
                                         _seletedMenuId.clear();
                                         categoryMenuItemList.clear();
                                         menuSetItemsId.clear();
-                                        _seletedMenuId.add(
-                                            categorySet[index].name.toString());
-                                        print(
-                                            "menuSetItemsId ==== ${categorySet[index]!.restaurantName}");
+                                        _seletedMenuId.add(categorySet[index].name.toString());
+                                        print("menuSetItemsId ==== ${categorySet[index]!.restaurantName}");
 
                                         //============================ store resid and resname =========================//
                                         resId = categorySet[index]
@@ -466,39 +487,26 @@ class _MenuState extends State<Menu> {
                                             .toString();
                                         //============================ store resid and resname =========================//
 
-                                          //// category set i get
-                                          ////// i get menuSetId set from category set
-                                          for (var i = 0;
-                                              i <
-                                                  categorySet[index]
-                                                      .menuitemSet!
-                                                      .length;
-                                              i++) {
+                                        //// category set i get
+                                        ////// i get menuSetId set from category set
+                                        for (var i = 0; i < categorySet[index].menuitemSet!.length; i++) {
+                                          //print("menuset_list == =${categorySet[index].menuitemSet![i].toString()}");
                                             setState(() {
-                                              menuSetItemsId.add(
-                                                  categorySet[index]
-                                                      .menuitemSet![i]
-                                                      .toString());
+                                              menuSetItemsId.add(categorySet[index].menuitemSet![i].toString());
+                                            });
+                                          print("menuset_list added == =${menuSetItemsId.length}");
+                                          }
+
+                                        for (var menuSetItems = 0; menuSetItems < menuItemsList.length; menuSetItems++) {
+                                          if (menuSetItemsId.contains("${menuItemsList[menuSetItems].id}")) {
+                                            setState(() {
+                                              categoryMenuItemList.add(menuItemsList[menuSetItems]);
                                             });
                                           }
-
-                                          for (var menuSetItems = 0;
-                                              menuSetItems <
-                                                  menuItemsList.length;
-                                              menuSetItems++) {
-                                            if (menuSetItemsId.contains(
-                                                "${menuItemsList[menuSetItems].id}")) {
-                                              setState(() {
-                                                categoryMenuItemList.add(
-                                                    menuItemsList[
-                                                        menuSetItems]);
-                                              });
-                                            }
-                                          }
+                                        }
                                       });
 
-                                      print(
-                                          "isHaveHiveCart --- ======= ${isHaveHiveCart}");
+                                      print("isHaveHiveCart --- ======= ${isHaveHiveCart}");
                                     },
                                     child: Container(
                                       padding: EdgeInsets.only(
@@ -517,13 +525,16 @@ class _MenuState extends State<Menu> {
                                                     .name
                                                     .toString())
                                             ? AppColors.mainColor
-                                            : Colors.grey.shade200,
+                                            : AppColors.menuColor,
                                       ),
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
                                           "${categorySet[index]!.name}",
+                                          locale: Locale('zh'),
+
                                           style: TextStyle(
+                                            fontFamily: "NotoSansCJKSC",
                                             fontWeight: FontWeight.w300,
                                             fontSize: 14,
                                             color: _seletedMenuId.contains(
@@ -551,7 +562,7 @@ class _MenuState extends State<Menu> {
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.white,
+                                        color: Colors.black,
                                         letterSpacing: 1.3),
                                   ),
                                 ),
@@ -573,18 +584,30 @@ class _MenuState extends State<Menu> {
                                                 categoryMenuItemList[
                                                     menuSetIndex];
 
-                                            return Container(
+                                            print("categoryMenuItemsData!.name === ${categoryMenuItemsData!.name}");
+
+                                            //print("categoryMenuItemsData!.originalImage! === ${categoryMenuItemsData!.images![0]!.workingUrl}");
+
+                                            return SizedBox(
+                                              child: Container(
                                                 margin: EdgeInsets.only(
-                                              bottom: 10,
-                                              left: 10,
-                                            ),
-                                                padding: EdgeInsets.only(
-                                                left: 10, top: 5, bottom: 5),
-                                                decoration: BoxDecoration(
-                                                color: AppColors.mainColor,
-                                                borderRadius: BorderRadius.circular(10),
-                                                  border: Border.all(width: 2, color: AppColors.cartColor)
+                                                  bottom: 10,
+                                                  left: 10,
                                                 ),
+                                                padding: EdgeInsets.only(
+                                                    left: 10, top: 5, bottom: 5),
+                                                decoration: BoxDecoration(
+                                                    color: AppColors.menuColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(10),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                          color: Colors
+                                                              .grey.shade200,
+                                                          spreadRadius: 2,
+                                                          blurRadius: 4,
+                                                          offset: Offset(0, 2))
+                                                    ]),
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -596,14 +619,19 @@ class _MenuState extends State<Menu> {
                                                             width: 60,
                                                             height: 60,
                                                             child: ClipRRect(
-                                                              borderRadius: BorderRadius.circular(10),
-                                                              child: AppNetworkImage(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              child:
+                                                                  AppNetworkImage(
                                                                 src: categoryMenuItemsData!
-                                                                            .originalImage ==
-                                                                        null
-                                                                    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIahHPyA0zEQufe9eb6UEac2lIlwttjWCj_Mu4SQW9NZDjRzaqRSbrN32eWvv-vCqm7TA&usqp=CAU"
+                                                                        .images!
+                                                                        .isEmpty
+                                                                    ? "https://img.freepik.com/premium-vector/cooking-process-pan_602006-4.jpg?w=740"
                                                                     : categoryMenuItemsData!
-                                                                        .originalImage!
+                                                                        .images![
+                                                                            0]!
                                                                         .workingUrl!,
                                                                 fit: BoxFit
                                                                     .contain,
@@ -614,7 +642,7 @@ class _MenuState extends State<Menu> {
                                                           width: 15,
                                                         ),
                                                         SizedBox(
-                                                          width: size.width * .35,
+                                                          width: size.width * .33,
                                                           child: Column(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
@@ -625,11 +653,16 @@ class _MenuState extends State<Menu> {
                                                             children: [
                                                               Text(
                                                                 "${categoryMenuItemsData!.name}",
+                                                                locale: Locale('zh'),
+
                                                                 style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  fontWeight: FontWeight.w500,
-                                                                  color: Colors.white
-                                                                ),
+                                                                  fontFamily: "NotoSansCJKSC",
+                                                                    fontSize: 14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: Colors
+                                                                        .black),
                                                               ),
                                                               const SizedBox(
                                                                 height: 5,
@@ -638,7 +671,8 @@ class _MenuState extends State<Menu> {
                                                                 "CA \$ ${categoryMenuItemsData!.basePrice}",
                                                                 style: TextStyle(
                                                                     fontSize: 18,
-                                                                    color: Colors.white,
+                                                                    color: Colors
+                                                                        .black,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
@@ -680,7 +714,8 @@ class _MenuState extends State<Menu> {
                                                                       // ),
                                                                       // SizedBox(width: 5,),
                                                                       Icon(
-                                                                        color: Colors.white,
+                                                                        color: Colors
+                                                                            .black,
                                                                         Icons
                                                                             .mode_comment_outlined,
                                                                         size: 15,
@@ -692,7 +727,8 @@ class _MenuState extends State<Menu> {
                                                                         "96 Reviews",
                                                                         style:
                                                                             TextStyle(
-                                                                              color: Colors.white,
+                                                                          color: Colors
+                                                                              .black,
                                                                           fontSize:
                                                                               12,
                                                                         ),
@@ -713,33 +749,38 @@ class _MenuState extends State<Menu> {
                                                           CrossAxisAlignment.end,
                                                       children: [
                                                         InkWell(
-                                                          onTap:(){
+                                                          onTap: () {
                                                             setState(() {
-                                                              if(_seletedFav.contains(categoryMenuItemsData.id)){
-                                                                _seletedFav.remove(categoryMenuItemsData.id);
-                                                              }else{
-                                                                _seletedFav.add(categoryMenuItemsData.id);
+                                                              if (_seletedFav
+                                                                  .contains(
+                                                                      categoryMenuItemsData
+                                                                          .id)) {
+                                                                _seletedFav.remove(
+                                                                    categoryMenuItemsData
+                                                                        .id);
+                                                              } else {
+                                                                _seletedFav.add(
+                                                                    categoryMenuItemsData
+                                                                        .id);
                                                               }
-                                                            setState(() {
-
+                                                              setState(() {});
                                                             });
-
-                                                            });
-                                                         },
+                                                          },
                                                           child: Container(
                                                             width: 30,
                                                             height: 50,
-                                                            margin: EdgeInsets.only(
-                                                                right: 5),
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
                                                             decoration:
                                                                 BoxDecoration(
-                                                                    color: _seletedFav.contains(categoryMenuItemsData.id) ? Colors.blueGrey : Color(
-                                                                        0xffeeeeee),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .only(
-                                                                      bottomLeft: Radius
-                                                                          .circular(
+                                                                    color: _seletedFav
+                                                                            .contains(categoryMenuItemsData.id)
+                                                                        ? Colors.blueGrey
+                                                                        : Color(0xffeeeeee),
+                                                                    borderRadius: BorderRadius.only(
+                                                                      bottomLeft:
+                                                                          Radius.circular(
                                                                               20),
                                                                       topLeft: Radius
                                                                           .circular(
@@ -747,8 +788,8 @@ class _MenuState extends State<Menu> {
                                                                       topRight: Radius
                                                                           .circular(
                                                                               100),
-                                                                      bottomRight: Radius
-                                                                          .circular(
+                                                                      bottomRight:
+                                                                          Radius.circular(
                                                                               20),
                                                                     ),
                                                                     boxShadow: [
@@ -759,7 +800,8 @@ class _MenuState extends State<Menu> {
                                                                               0.1),
                                                                       spreadRadius:
                                                                           1,
-                                                                      blurRadius: 1)
+                                                                      blurRadius:
+                                                                          1)
                                                                 ]),
                                                             child: Column(
                                                               children: [
@@ -767,16 +809,19 @@ class _MenuState extends State<Menu> {
                                                                   width: 30,
                                                                   height: 30,
                                                                   decoration: BoxDecoration(
-                                                                      color: _seletedFav.contains(categoryMenuItemsData.id) ? AppColors.mainColor : Colors
-                                                                          .white,
+                                                                      color: _seletedFav.contains(categoryMenuItemsData
+                                                                              .id)
+                                                                          ? AppColors
+                                                                              .mainColor
+                                                                          : Colors
+                                                                              .white,
                                                                       borderRadius:
-                                                                          BorderRadius
-                                                                              .circular(
-                                                                                  100)),
+                                                                          BorderRadius.circular(
+                                                                              100)),
                                                                   child: Icon(
-                                                                    Icons.favorite_border,
+                                                                    Icons
+                                                                        .favorite_border,
                                                                     size: 15,
-
                                                                   ),
                                                                 ),
                                                                 SizedBox(
@@ -814,12 +859,14 @@ class _MenuState extends State<Menu> {
                                                                     left: 10),
                                                             decoration:
                                                                 BoxDecoration(
-                                                                    color: isHaveHiveCart.contains(
-                                                                            categoryMenuItemsData
+                                                                    color: isHaveHiveCart
+                                                                            .contains(categoryMenuItemsData
                                                                                 .id
                                                                                 .toString())
-                                                                        ? AppColors.secColor
-                                                                        : AppColors.cartColor,
+                                                                        ? Colors
+                                                                            .green
+                                                                        : AppColors
+                                                                            .mainColor,
                                                                     borderRadius:
                                                                         BorderRadius
                                                                             .only(
@@ -857,7 +904,7 @@ class _MenuState extends State<Menu> {
                                                                           .delete_forever
                                                                       : Icons.add,
                                                                   color: Colors
-                                                                      .black,
+                                                                      .white,
                                                                   size: 15,
                                                                 )),
                                                           ),
@@ -866,6 +913,7 @@ class _MenuState extends State<Menu> {
                                                     )
                                                   ],
                                                 ),
+                                              ),
                                             );
                                           }),
                                 ),
@@ -948,10 +996,12 @@ class _MenuState extends State<Menu> {
       } //===== if you dont have different restaurant cart product ======//
     }
   }
+
 ///////////////////////// this is add to local server /////////////////
 
   //////// gobal list for hive cart item//////
   List<HiveCartModel> dataList = [];
+
   void getCartItemFromHive() async {
     isHaveHiveCart.clear();
     dataList = HiveCartController.cartBox.values.toList();
@@ -1162,6 +1212,7 @@ class TopBarMenuButton extends StatelessWidget {
     required this.color,
     required this.onClick,
   });
+
   final String text;
   final Color color;
   final VoidCallback onClick;
@@ -1212,9 +1263,9 @@ class DeliveryButtonMenu extends StatelessWidget {
         margin: margin,
         padding: EdgeInsets.all(5),
         decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(100),
-            ),
+          color: color,
+          borderRadius: BorderRadius.circular(100),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

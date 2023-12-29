@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:resturentapp/local_storage/cart/car_hive_controller.dart';
 import 'package:resturentapp/local_storage/cart/cartmodel.dart';
-import 'package:resturentapp/view/auth/login.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:resturentapp/view/flash/flashScreen.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -29,6 +29,17 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: "themeFont",
       ),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        // Add your custom localization delegate if needed
+      ],
+      supportedLocales: [
+        const Locale('en', 'US'), // English
+        const Locale('zh', 'CN'), // Chinese (Simplified)
+
+        // Add more locales as needed
+      ],
       home: const FlashScreen(),
     );
   }

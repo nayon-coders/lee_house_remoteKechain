@@ -5,6 +5,7 @@ import 'package:resturentapp/utility/appConst.dart';
 import 'package:resturentapp/utility/colors.dart';
 import 'package:resturentapp/view/auth/login.dart';
 import 'package:resturentapp/view/bottomNavigationBar/bottomNavigationBar.dart';
+import 'package:resturentapp/view/menu/menu.dart';
 import 'package:resturentapp/view/profile/afterLoginProfile.dart';
 import 'package:resturentapp/viewController/appButton.dart';
 import 'package:resturentapp/viewController/appNetworkImage.dart';
@@ -115,10 +116,10 @@ class _HomeState extends State<Home> {
               ),
               child: Row(
                 children: [
-                  SizedBox(width: size.width*.60,
+                  SizedBox(width: size.width*.55,
                       child: Text("Members can enjoy permanet benefits",
                         style: TextStyle(
-                            fontSize: 25, color: Colors.black, fontWeight: FontWeight.w600
+                            fontSize: 22, color: Colors.black, fontWeight: FontWeight.w600
                         ),
                       )
                   ),
@@ -369,7 +370,7 @@ class _HomeState extends State<Home> {
                           height: 120,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
-                              color: AppColors.mainColor,
+                              color: AppColors.menuColor,
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
@@ -395,55 +396,76 @@ class _HomeState extends State<Home> {
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
-                                      color: AppColors.white
+                                      color: AppColors.black
                                     ),
                                   ),
                                   SizedBox(height: 5,),
-                                  Text("${HomeFoosList.homeFoodList[index].price}",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.white
-                                    ),
-                                  ),
-                                  SizedBox(height: 5,),
+                                  // Text("${HomeFoosList.homeFoodList[index].price}",
+                                  //   style: TextStyle(
+                                  //       fontSize: 18,
+                                  //       fontWeight: FontWeight.w500,
+                                  //       color: AppColors.black
+                                  //   ),
+                                  // ),
+                                  // SizedBox(height: 5,),
                                   SizedBox(
                                     width: MediaQuery.of(context).size.width*.50,
                                     child: Text("${HomeFoosList.homeFoodList[index].description}",
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2, // Adjust this number as needed
                                       style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w300,
-                                          color: AppColors.white
+                                          color: AppColors.black
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 5,),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width*.50,
-                                    child: Row(
-                                      children: [
-
-                                        Icon(Icons.chat_bubble_outline, size: 15,
-                                            color: AppColors.white),
-                                        SizedBox(width: 3,),
-                                        Text("${HomeFoosList.homeFoodList[index].review}",
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w300,
-                                              color: AppColors.white
-                                          ),
-                                        ),
-                                        SizedBox(width: 3,),
-                                        Text("Reviews",
-                                          style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w300,
-                                              color: AppColors.white
-                                          ),
-                                        ),
-                                      ],
+                                  SizedBox(height: 10,),
+                                  InkWell(
+                                    onTap:()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>AppBottomNavigationBar(pageIndex: 1,))),
+                                    child: Container(
+                                      width: 130,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.white,
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: Center(child: Text("See Details",
+                                      style:TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black
+                                      )
+                                      ),),
                                     ),
                                   )
+                                  // SizedBox(height: 5,),
+                                  // SizedBox(
+                                  //   width: MediaQuery.of(context).size.width*.50,
+                                  //   child: Row(
+                                  //     children: [
+                                  //
+                                  //       Icon(Icons.chat_bubble_outline, size: 15,
+                                  //           color: AppColors.white),
+                                  //       SizedBox(width: 3,),
+                                  //       Text("${HomeFoosList.homeFoodList[index].review}",
+                                  //         style: TextStyle(
+                                  //             fontSize: 13,
+                                  //             fontWeight: FontWeight.w300,
+                                  //             color: AppColors.black
+                                  //         ),
+                                  //       ),
+                                  //       SizedBox(width: 3,),
+                                  //       Text("Reviews",
+                                  //         style: TextStyle(
+                                  //             fontSize: 13,
+                                  //             fontWeight: FontWeight.w300,
+                                  //             color: AppColors.black
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // )
                                 ],
                               )
                             ],
@@ -470,31 +492,38 @@ class _HomeState extends State<Home> {
 class HomeFoosList{
   static  List<HomeFoodListModel> homeFoodList = [
     HomeFoodListModel(
-        name: "Burger",
+        name: "Appetizer",
         price: "CA \$23.90",
-        description: "Lorem ipsum dolor sit amet consectetu",
-        image: "https://images.unsplash.com/photo-1572448862527-d3c904757de6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE1fHx8ZW58MHx8fHx8&w=1000&q=80",
+        description: "Discover a tantalizing array of appetizers at Lee House Restaurant. Our culinary artisans have masterfully created a selection that includes Crispy Spring Rolls, Pork Dumplings, and Deep-Fried Tofu, all meticulously crafted to perfection.",
+        image: "https://order.chatchefs.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fapptzr.8bdff3d5.png&w=3840&q=75",
         review: "90"
     ),
     HomeFoodListModel(
-        name: "Pizza",
+        name: "Soups",
         price: "CA \$33.90",
-        description: "Lorem ipsum dolor sit amet consectetur ",
-        image: "https://storage.needpix.com/rsynced_images/food-3245765_1280.jpg",
+        description: "Offers comforting soups like Wonton Soup and Hot-&-Sour Soup, providing a soothing dining experience.",
+        image: "https://order.chatchefs.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fsoup.bb3d352a.png&w=3840&q=75",
         review: "130"
     ),
     HomeFoodListModel(
-        name: "Biriyani",
+        name: "Noodles",
         price: "CA \$33.90",
-        description: "One of the reasons I like to cook mostly healthy ...",
-        image: "https://assets.epicurious.com/photos/5988e3458e3ab375fe3c0caf/1:1/w_3607,h_3607,c_limit/How-to-Make-Chicken-Alfredo-Pasta-hero-02082017.jpg",
+        description: "Indulge in signature noodle of Lee House restaurant, such as Braised Beef Brisket Noodle, which showcase delightful flavor combinations.",
+        image: "https://order.chatchefs.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fnoodles.cb115688.png&w=3840&q=75",
         review: "130"
     ),
     HomeFoodListModel(
-        name: "Chicken Fri\y",
+        name: "Chicken",
         price: "CA \$43.90",
-        description: "One of the reasons I like to cook mostly healthy food is so I ",
-        image: "https://spoonsofflavor.com/wp-content/uploads/2020/08/Easy-Chicken-Fry-Recipe.jpg",
+        description: "Feast on savory dishes such as Sweet & Sour Chicken, Lemon Chicken, Three Spices Chicken and and Kung Po Chicken with Peanuts",
+        image: "https://order.chatchefs.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fchicken.ebe309c5.png&w=3840&q=75",
+        review: "80"
+    ),
+    HomeFoodListModel(
+        name: "Beverages",
+        price: "CA \$43.90",
+        description: "Complementing the meal is a selection of cool and refreshing beverages, including iced tea and fruity slushies. These beverages provide a delightful balance to the overall dining experience.",
+        image: "https://order.chatchefs.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fbvgs.508e1b5e.png&w=3840&q=75",
         review: "80"
     ),
   ];

@@ -192,7 +192,7 @@ class _CartState extends State<Cart> {
                                    child: ClipRRect(
                                      borderRadius: BorderRadius.circular(10),
                                      child: AppNetworkImage( src: dataList[index].image == "null"
-                                         ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIahHPyA0zEQufe9eb6UEac2lIlwttjWCj_Mu4SQW9NZDjRzaqRSbrN32eWvv-vCqm7TA&usqp=CAU"
+                                         ? "https://img.freepik.com/premium-vector/cooking-process-pan_602006-4.jpg?w=740"
                                          :  dataList[index].image!,
                                        fit: BoxFit.cover,
                                      ),

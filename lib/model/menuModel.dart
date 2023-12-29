@@ -153,7 +153,7 @@ class CategorySet {
   final int? menuitemCnt;
   final List<int>? menuitemSet;
   final String? menuName;
-  final String? restaurantName;
+  final RestaurantName? restaurantName;
   final String? locationNames;
   final DateTime? createdDate;
   final DateTime? modifiedDate;
@@ -161,7 +161,7 @@ class CategorySet {
   final String? slug;
   final String? name;
   final String? description;
-  final dynamic otterCategoryId;
+  final String? otterCategoryId;
   final bool? showInOverview;
   final int? menu;
   final int? restaurant;
@@ -196,7 +196,7 @@ class CategorySet {
     menuitemCnt: json["menuitem_cnt"],
     menuitemSet: json["menuitem_set"] == null ? [] : List<int>.from(json["menuitem_set"]!.map((x) => x)),
     menuName: json["menu_name"]!,
-    restaurantName: json["restaurant_name"]!,
+    restaurantName: restaurantNameValues.map[json["restaurant_name"]]!,
     locationNames: json["location_names"],
     createdDate: json["created_date"] == null ? null : DateTime.parse(json["created_date"]),
     modifiedDate: json["modified_date"] == null ? null : DateTime.parse(json["modified_date"]),
@@ -237,11 +237,11 @@ class CategorySet {
 }
 
 enum Title {
-  LEE_S_HOUSE_MENUS_FROM_EXCEL
+  ALL_DAY_MENU
 }
 
 final titleValues = EnumValues({
-  "Lee's house menus from excel": Title.LEE_S_HOUSE_MENUS_FROM_EXCEL
+  "All Day Menu": Title.ALL_DAY_MENU
 });
 
 enum RestaurantName {
@@ -254,8 +254,8 @@ final restaurantNameValues = EnumValues({
 
 class MenuitemSet {
   final int? id;
-  final List<dynamic>? images;
-  final List<dynamic>? modifiergroupSet;
+  final List<Images>? images;
+  final List<ModifiergroupSet>? modifiergroupSet;
   final dynamic originalImage;
   final String? menuName;
   final String? categoryNames;
@@ -273,7 +273,7 @@ class MenuitemSet {
   final bool? isVegetarian;
   final bool? isGlutenfree;
   final bool? haveNuts;
-  final dynamic otterItemId;
+  final String? otterItemId;
   final int? menu;
   final int? restaurant;
   final List<dynamic>? extraNames;
@@ -315,8 +315,8 @@ class MenuitemSet {
 
   factory MenuitemSet.fromJson(Map<String, dynamic> json) => MenuitemSet(
     id: json["id"],
-    images: json["images"] == null ? [] : List<dynamic>.from(json["images"]!.map((x) => x)),
-    modifiergroupSet: json["modifiergroup_set"] == null ? [] : List<dynamic>.from(json["modifiergroup_set"]!.map((x) => x)),
+    images: json["images"] == null ? [] : List<Images>.from(json["images"]!.map((x) => Images.fromJson(x))),
+    modifiergroupSet: json["modifiergroup_set"] == null ? [] : List<ModifiergroupSet>.from(json["modifiergroup_set"]!.map((x) => ModifiergroupSet.fromJson(x))),
     originalImage: json["original_image"],
     menuName: json["menu_name"]!,
     categoryNames: json["category_names"],
@@ -327,7 +327,7 @@ class MenuitemSet {
     name: json["name"],
     description: json["description"],
     basePrice: json["base_price"]?.toDouble(),
-    virtualPrice: json["virtual_price"],
+    virtualPrice: json["virtual_price"]?.toDouble(),
     currency: currencyValues.map[json["currency"]]!,
     isAvailable: json["is_available"],
     isVegan: json["is_vegan"],
@@ -346,8 +346,8 @@ class MenuitemSet {
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "images": images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
-    "modifiergroup_set": modifiergroupSet == null ? [] : List<dynamic>.from(modifiergroupSet!.map((x) => x)),
+    "images": images == null ? [] : List<dynamic>.from(images!.map((x) => x.toJson())),
+    "modifiergroup_set": modifiergroupSet == null ? [] : List<dynamic>.from(modifiergroupSet!.map((x) => x.toJson())),
     "original_image": originalImage,
     "menu_name": titleValues.reverse[menuName],
     "category_names": categoryNames,
@@ -382,6 +382,194 @@ enum Currency {
 
 final currencyValues = EnumValues({
   "CAD": Currency.CAD
+});
+
+class Images {
+  final int? id;
+  final String? workingUrl;
+  final DateTime? createdDate;
+  final DateTime? modifiedDate;
+  final String? remoteUrl;
+  final String? localUrl;
+  final String? otterImageId;
+
+  Images({
+    this.id,
+    this.workingUrl,
+    this.createdDate,
+    this.modifiedDate,
+    this.remoteUrl,
+    this.localUrl,
+    this.otterImageId,
+  });
+
+  factory Images.fromJson(Map<String, dynamic> json) => Images(
+    id: json["id"],
+    workingUrl: json["working_url"],
+    createdDate: json["created_date"] == null ? null : DateTime.parse(json["created_date"]),
+    modifiedDate: json["modified_date"] == null ? null : DateTime.parse(json["modified_date"]),
+    remoteUrl: json["remote_url"],
+    localUrl: json["local_url"],
+    otterImageId: json["otter_image_id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "working_url": workingUrl,
+    "created_date": createdDate?.toIso8601String(),
+    "modified_date": modifiedDate?.toIso8601String(),
+    "remote_url": remoteUrl,
+    "local_url": localUrl,
+    "otter_image_id": otterImageId,
+  };
+}
+
+class ModifiergroupSet {
+  final int? id;
+  final List<ModifierItem>? modifierItems;
+  final DateTime? createdDate;
+  final DateTime? modifiedDate;
+  final String? uid;
+  final String? slug;
+  final String? name;
+  final String? description;
+  final RequirementStatus? requirementStatus;
+  final int? modifierLimit;
+  final int? itemLimit;
+  final String? otterId;
+  final int? menu;
+  final int? restaurant;
+  final List<int>? usedBy;
+  final List<dynamic>? locations;
+  final List<dynamic>? posIdentifier;
+
+  ModifiergroupSet({
+    this.id,
+    this.modifierItems,
+    this.createdDate,
+    this.modifiedDate,
+    this.uid,
+    this.slug,
+    this.name,
+    this.description,
+    this.requirementStatus,
+    this.modifierLimit,
+    this.itemLimit,
+    this.otterId,
+    this.menu,
+    this.restaurant,
+    this.usedBy,
+    this.locations,
+    this.posIdentifier,
+  });
+
+  factory ModifiergroupSet.fromJson(Map<String, dynamic> json) => ModifiergroupSet(
+    id: json["id"],
+    modifierItems: json["modifier_items"] == null ? [] : List<ModifierItem>.from(json["modifier_items"]!.map((x) => ModifierItem.fromJson(x))),
+    createdDate: json["created_date"] == null ? null : DateTime.parse(json["created_date"]),
+    modifiedDate: json["modified_date"] == null ? null : DateTime.parse(json["modified_date"]),
+    uid: json["uid"],
+    slug: json["slug"],
+    name: json["name"],
+    description: json["description"],
+    requirementStatus: requirementStatusValues.map[json["requirement_status"]]!,
+    modifierLimit: json["modifier_limit"],
+    itemLimit: json["item_limit"],
+    otterId: json["otter_id"],
+    menu: json["menu"],
+    restaurant: json["restaurant"],
+    usedBy: json["used_by"] == null ? [] : List<int>.from(json["used_by"]!.map((x) => x)),
+    locations: json["locations"] == null ? [] : List<dynamic>.from(json["locations"]!.map((x) => x)),
+    posIdentifier: json["pos_identifier"] == null ? [] : List<dynamic>.from(json["pos_identifier"]!.map((x) => x)),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "modifier_items": modifierItems == null ? [] : List<dynamic>.from(modifierItems!.map((x) => x.toJson())),
+    "created_date": createdDate?.toIso8601String(),
+    "modified_date": modifiedDate?.toIso8601String(),
+    "uid": uid,
+    "slug": slug,
+    "name": name,
+    "description": description,
+    "requirement_status": requirementStatusValues.reverse[requirementStatus],
+    "modifier_limit": modifierLimit,
+    "item_limit": itemLimit,
+    "otter_id": otterId,
+    "menu": menu,
+    "restaurant": restaurant,
+    "used_by": usedBy == null ? [] : List<dynamic>.from(usedBy!.map((x) => x)),
+    "locations": locations == null ? [] : List<dynamic>.from(locations!.map((x) => x)),
+    "pos_identifier": posIdentifier == null ? [] : List<dynamic>.from(posIdentifier!.map((x) => x)),
+  };
+}
+
+class ModifierItem {
+  final int? id;
+  final String? name;
+  final String? description;
+  final double? basePrice;
+  final double? virtualPrice;
+  final Currency? currency;
+  final List<dynamic>? images;
+  final List<dynamic>? category;
+  final bool? isAvailable;
+  final bool? isVegan;
+  final bool? isVegetarian;
+  final bool? isGlutenfree;
+
+  ModifierItem({
+    this.id,
+    this.name,
+    this.description,
+    this.basePrice,
+    this.virtualPrice,
+    this.currency,
+    this.images,
+    this.category,
+    this.isAvailable,
+    this.isVegan,
+    this.isVegetarian,
+    this.isGlutenfree,
+  });
+
+  factory ModifierItem.fromJson(Map<String, dynamic> json) => ModifierItem(
+    id: json["id"],
+    name: json["name"],
+    description: json["description"],
+    basePrice: json["base_price"]?.toDouble(),
+    virtualPrice: json["virtual_price"]?.toDouble(),
+    currency: currencyValues.map[json["currency"]]!,
+    images: json["images"] == null ? [] : List<dynamic>.from(json["images"]!.map((x) => x)),
+    category: json["category"] == null ? [] : List<dynamic>.from(json["category"]!.map((x) => x)),
+    isAvailable: json["is_available"],
+    isVegan: json["is_vegan"],
+    isVegetarian: json["is_vegetarian"],
+    isGlutenfree: json["is_glutenfree"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "description": description,
+    "base_price": basePrice,
+    "virtual_price": virtualPrice,
+    "currency": currencyValues.reverse[currency],
+    "images": images == null ? [] : List<dynamic>.from(images!.map((x) => x)),
+    "category": category == null ? [] : List<dynamic>.from(category!.map((x) => x)),
+    "is_available": isAvailable,
+    "is_vegan": isVegan,
+    "is_vegetarian": isVegetarian,
+    "is_glutenfree": isGlutenfree,
+  };
+}
+
+enum RequirementStatus {
+  REQUIRED
+}
+
+final requirementStatusValues = EnumValues({
+  "required": RequirementStatus.REQUIRED
 });
 
 class OpeningHour {

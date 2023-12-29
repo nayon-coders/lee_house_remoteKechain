@@ -1,7 +1,7 @@
 class AppConst{
 
-  static const String LOCATON_ID = "56";
-  static const String RESTURENT_ID = "101"; //for test enverment
+  static const String LOCATON_ID = "49";
+  static const String RESTURENT_ID = "83"; //for test enverment
 
 
 

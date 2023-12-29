@@ -5,11 +5,11 @@ import 'package:line_icons/line_icons.dart';
 import 'package:resturentapp/utility/appConst.dart';
 import 'package:resturentapp/utility/colors.dart';
 import 'package:resturentapp/view/home/home.dart';
+import 'package:resturentapp/view/menu/menu.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/login.dart';
 import '../gift/gift.dart';
-import '../menu/menu.dart';
 import '../profile/afterLoginProfile.dart';
 
 class AppBottomNavigationBar extends StatefulWidget {

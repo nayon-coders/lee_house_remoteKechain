@@ -31,6 +31,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -106,6 +109,9 @@ flutter:
         - asset: assets/fonts/Asap_Condensed-Bold.ttf
         - asset: assets/fonts/Asap_Condensed-Medium.ttf
         - asset: assets/fonts/Asap_Condensed-Regular.ttf
+    - family: NotoSansCJKSC
+      fonts:
+        - asset: assets/fonts/NotoSansCJKsc-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
