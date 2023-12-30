@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -144,6 +146,10 @@ class _MenuState extends State<Menu> {
 
   @override
   Widget build(BuildContext context) {
+    print(Localizations.localeOf(context));
+    var locale = Localizations.localeOf(context);
+    // Initialize the message lookup
+
     var size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
@@ -506,7 +512,7 @@ class _MenuState extends State<Menu> {
                                         }
                                       });
 
-                                      print("isHaveHiveCart --- ======= ${isHaveHiveCart}");
+                                      print("isHaveHiveCart --- ======= ${categorySet[index]!.name.toString()}");
                                     },
                                     child: Container(
                                       padding: EdgeInsets.only(
@@ -530,11 +536,10 @@ class _MenuState extends State<Menu> {
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
-                                          "${categorySet[index]!.name}",
+                                          "${categorySet[index]!.name.toString()}",
                                           locale: Locale('zh'),
-
                                           style: TextStyle(
-                                            fontFamily: "NotoSansCJKSC",
+                                            //fontFamily: "NotoSansCJKSC",
                                             fontWeight: FontWeight.w300,
                                             fontSize: 14,
                                             color: _seletedMenuId.contains(
@@ -545,6 +550,7 @@ class _MenuState extends State<Menu> {
                                                 : Colors.black,
                                           ),
                                         ),
+                                        //child:  MyLocalizedWidget("${categorySet[index]!.name.toString()}"),
                                       ),
                                     ),
                                   );
@@ -1285,4 +1291,30 @@ class DeliveryButtonMenu extends StatelessWidget {
       ),
     );
   }
+}
+
+class MyLocalizedWidget extends StatelessWidget {
+  final String text;
+  MyLocalizedWidget(this.text);
+  @override
+  Widget build(BuildContext context) {
+    // Retrieve the current locale
+    var locale = Localizations.localeOf(context);
+
+    // Initialize the message lookup
+    var messages = MyLocalizations(locale, text);
+
+    return Text(messages.greeting());
+  }
+}
+
+class MyLocalizations {
+  final Locale locale;
+  final String text;
+
+  MyLocalizations(this.locale, this.text);
+
+  // The `Intl.message` function automatically initializes messages for the specified locale.
+  String greeting() => Intl.message('${text}', name: 'greeting', desc: 'Greeting', locale: locale.languageCode);
+// Add more methods as needed
 }

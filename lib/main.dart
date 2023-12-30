@@ -29,18 +29,21 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: "themeFont",
       ),
-      localizationsDelegates: [
+      localizationsDelegates:  [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
-        // Add your custom localization delegate if needed
+        GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: [
-        const Locale('en', 'US'), // English
-        const Locale('zh', 'CN'), // Chinese (Simplified)
-
-        // Add more locales as needed
+        const Locale('en', 'US'),
+        const Locale('zh', 'Hant'),
       ],
+      locale: const Locale('zh', 'Hant'),
+
       home: const FlashScreen(),
     );
   }
+}
+
+class AppLocalizations {
 }

@@ -11,8 +11,8 @@ class AppConst{
   static const String pickUp = "assets/icons/pickup.png";
   static const String appBanner = "assets/images/banner"
       ".png"; //this is for huilau
-  static const String pickupIcon = "assets/images/huiluo_pickup.png";//this is for huilau
-  static const String deliveryIcon = "assets/images/huiluo_delivery.png";//this is for huilau
+  static const String pickupIcon = "assets/images/pickup.jpg";//this is for huilau
+  static const String deliveryIcon = "assets/images/delivery.jpg";//this is for huilau
   static const String noLogin = "assets/images/no_login.png";//this is no login image,
 
 }
