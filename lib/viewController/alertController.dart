@@ -7,7 +7,7 @@ class AlertController{
   static snackBar({required String text, required BuildContext context, required Color bg}){
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
-      duration: Duration(milliseconds: 3000),
+      duration: Duration(milliseconds: 4000),
       backgroundColor: bg,
     ));
   }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:resturentapp/controller/orderController.dart';
 import 'package:resturentapp/utility/appConst.dart';
 import 'package:resturentapp/utility/colors.dart';
 import 'package:resturentapp/view/bottomNavigationBar/bottomNavigationBar.dart';
 import 'package:resturentapp/view/orders/orderDetails.dart';
 
+import '../../model/order_list_model.dart';
 import '../../viewController/appBackButton.dart';
 
 class OrdersList extends StatefulWidget {
@@ -15,6 +17,15 @@ class OrdersList extends StatefulWidget {
 }
 
 class _OrdersListState extends State<OrdersList> {
+  //order list future
+  Future<OrderListModel>? _getOrderList;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getOrderList = OrderController.orderList();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size =MediaQuery.of(context).size;
@@ -53,7 +64,7 @@ class _OrdersListState extends State<OrdersList> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Completed",
+                      Text("Order List",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -63,18 +74,47 @@ class _OrdersListState extends State<OrdersList> {
                       ),
                       SizedBox(height: 10,),
 
-                      SizedBox(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: 10,
-                            itemBuilder: (_, index){
-                              return buildOrderItems(
-                                size: size,
-                                onClick: ()=>Get.to(OrderDetails()),
-                              );
-                            }
-                        ),
+                      FutureBuilder<OrderListModel>(
+                        future: _getOrderList,
+                        builder: (context, snapshot) {
+                          if(snapshot.connectionState == ConnectionState.waiting){
+                            return Center(child: CircularProgressIndicator
+                              (color: AppColors.mainColor,),);
+                          }else if(snapshot.hasData){
+                            return SizedBox(
+                              child:  snapshot.data!.results!.isEmpty
+                                  ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Image.asset("assets/images/no_cart.png",
+                                      height: 100, width: 100,
+                                    ),
+                                  ),
+                                  SizedBox(height: 10,),
+                                  Text("No order found."),
+                                ],
+                              ):
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: snapshot.data!.results!.length,
+                                  itemBuilder: (_, index){
+                                    var data = snapshot.data!.results![index];
+                                    return buildOrderItems(
+                                      size: size,
+                                      onClick: ()=>Get.to(OrderDetails()), orderResult: data,
+                                    );
+                                  }
+                              ),
+                            );
+                          }else{
+                            return Center(child: Text("Something went wrong "
+                                "with backend."),);
+                          }
+                        }
                       )
                     ],
                   ),
@@ -88,7 +128,9 @@ class _OrdersListState extends State<OrdersList> {
     );
   }
 
-  InkWell buildOrderItems({required Size size, required VoidCallback onClick}) {
+  InkWell buildOrderItems({required Size size, required VoidCallback onClick,
+  required OrderListResult orderResult
+  }) {
     return InkWell(
                       onTap: onClick,
                       child: Container(
@@ -107,7 +149,7 @@ class _OrdersListState extends State<OrdersList> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Order Name/number",
+                                Text("Order #${orderResult.orderId}",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     fontSize: 18,
@@ -118,7 +160,11 @@ class _OrdersListState extends State<OrdersList> {
                               ],
                             ),
                             SizedBox(height: 10,),
-                            Text("Order Date - Price - Number of items",
+                            Text("${orderResult!.receiveDate} - "
+                                "${orderResult!.total!.toString()} - "
+                                "${orderResult!.quantity}"
+                                " of "
+                                "items",
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 16,
@@ -174,7 +220,7 @@ class _OrdersListState extends State<OrdersList> {
                                     borderRadius: BorderRadius.circular(30),
 
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: Text("View Receipt",
                                       style: TextStyle(
                                           fontSize: 15,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:resturentapp/appConfig.dart';
 import 'package:resturentapp/local_storage/cart/car_hive_controller.dart';
 import 'package:resturentapp/local_storage/cart/cartmodel.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,7 +14,7 @@ void main() async{
 
   Hive.registerAdapter(HiveCartModelAdapter());
   HiveCartController.openBox();
-
+  Stripe.publishableKey = AppConfig.TEST_PUBLISH_KEY;
   runApp(const MyApp());
 }
 

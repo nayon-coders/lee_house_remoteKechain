@@ -12,7 +12,7 @@ class MenuControllers{
   //get menu item by location
   static Future<MenuModel> getSingleResturent(id)async{
     print("data ==== $id");
-    var response = await http.get(Uri.parse("https://api.chatchefs.com/api/food/v1/menu/?locations=${AppConst.LOCATON_ID}&direct_order=True"),
+    var response = await http.get(Uri.parse("https://test.api.chatchefs.com/api/food/v1/menu/?locations=56&direct_order=True"),
       headers: {
         "Content-Type" : 'application/json; charset=utf-8'
       }

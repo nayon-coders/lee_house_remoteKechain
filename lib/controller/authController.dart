@@ -37,6 +37,8 @@ class AuthController{
     if(response.statusCode == 200){
       _pref.setString("token", jsonDecode(response.body)["token"]);
       _pref.setString("username", "${jsonDecode(response.body)["user_info"]["first_name"]} ${jsonDecode(response.body)["user_info"]["last_name"]}");
+      _pref.setString("first_name", "${jsonDecode(response.body)["user_info"]["first_name"]}");
+      _pref.setString("last_name", "${jsonDecode(response.body)["user_info"]["last_name"]}");
     }
     return response;
   }

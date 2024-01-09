@@ -32,7 +32,7 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   //////////// initially set res info string ////////////
-  var resId, resName;
+  var resId, resName, resturentAddress, resturentPhoneNumber;
 
   //////////// initially set res info string ////////////
 
@@ -72,9 +72,19 @@ class _MenuState extends State<Menu> {
   Future<MenuModel>? getFoodMenuFuture;
 
   Future<MenuModel> getData() async {
+    setState(()=> isLoading = true);
     var res = await MenuControllers.getSingleResturent("${AppConst.LOCATON_ID}");
     _seletedMainMenu.clear();
     menuSetItemsId.clear();
+
+    ///===== store restaurant information =====//
+    resturentAddress = res.results![0]!.locationNames;
+    resId = res.results![0]!.restaurant.toString();
+    resName = res.results![0]!.restaurantName.toString();
+    resturentPhoneNumber = "+17784322111";
+    print("resturentAddress assign === ${resturentAddress}");
+    print("resName assign === ${resName}");
+    ///===== store restaurant information =====//
 
     ///////////// i just added hole category list into this list child list ////////
     for (var i = 0; i < res!.results![0]!.categorySet!.length; i++) {
@@ -113,11 +123,7 @@ class _MenuState extends State<Menu> {
         });
       }
     }
-    //============================ store resid and resname =========================//
-    if (categorySet.isNotEmpty) {
-      resId = categorySet[0].restaurant.toString();
-      resName = categorySet[0].restaurantName.toString();
-    }
+
     //============================ store resid and resname =========================//
 
     _seletedMainMenu.add(res!.results![0]!.id.toString());
@@ -125,6 +131,7 @@ class _MenuState extends State<Menu> {
     // if (res!.results![0]!.categorySet!.isNotEmpty) {
     //   menuSetItemsId.add(res!.results![0]!.categorySet![0].menuitemSet![0].toString());
     // }
+    setState(()=> isLoading = false);
     return res;
   }
 
@@ -213,15 +220,25 @@ class _MenuState extends State<Menu> {
               width: 10,
             ),
             InkWell(
-              onTap: () => dataList.length != 0
-                  ? navigateAndDisplaySelection(context)
-                  : ifDontHaveAnyFoodOnCart(),
+              onTap: (){
+                if(isLoading){
+                  return null;
+                }else{
+                  if(dataList.length != 0){
+                    navigateAndDisplaySelection(context);
+                  }else{
+                    ifDontHaveAnyFoodOnCart();
+                  }
+
+                }
+              },
               child: Container(
                 width: size.width * .20,
                 margin: EdgeInsets.only(top: 30, bottom: 30),
                 padding: EdgeInsets.only(left: 10, right: 10),
                 decoration: BoxDecoration(
-                  color: AppColors.mainColor,
+                  color: isLoading ?  AppColors.mainColor.withOpacity(0.3) :
+                      AppColors.mainColor,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Stack(
@@ -379,12 +396,6 @@ class _MenuState extends State<Menu> {
                               }
 
                               //============================ store resid and resname =========================//
-                              if (categorySet.isNotEmpty) {
-                                resId = categorySet[0].restaurant.toString();
-                                resName =
-                                    categorySet[0].restaurantName.toString();
-                              }
-                              //============================ store resid and resname =========================//
                               // _seletedMenuId.add(categorySet[0].name.toString());
                               ///////////// i just added hole category list into this list child list ////////
                               Future.delayed(Duration(milliseconds: 100), () {
@@ -483,15 +494,6 @@ class _MenuState extends State<Menu> {
                                         menuSetItemsId.clear();
                                         _seletedMenuId.add(categorySet[index].name.toString());
                                         print("menuSetItemsId ==== ${categorySet[index]!.restaurantName}");
-
-                                        //============================ store resid and resname =========================//
-                                        resId = categorySet[index]
-                                            .restaurant
-                                            .toString();
-                                        resName = categorySet[index]
-                                            .restaurantName
-                                            .toString();
-                                        //============================ store resid and resname =========================//
 
                                         //// category set i get
                                         ////// i get menuSetId set from category set
@@ -1165,12 +1167,15 @@ class _MenuState extends State<Menu> {
 
   // nvigator the cart page
   Future<void> navigateAndDisplaySelection(BuildContext context) async {
+    print("resName === ${resName}");
+    print("resName === ${resturentPhoneNumber}");
+    print("resName === ${resturentAddress}");
     // Navigator.push returns a Future that completes after calling
     // Navigator.pop on the Selection Screen.
     final result = await Navigator.push(
       context,
       // Create the SelectionScreen in the next step.
-      MaterialPageRoute(builder: (context) => const Cart()),
+      MaterialPageRoute(builder: (context) =>  Cart()),
     );
 
     // if result is true then call hive cart database

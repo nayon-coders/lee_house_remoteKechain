@@ -28,6 +28,16 @@ class _SignUpState extends State<SignUp> {
   final phone = TextEditingController();
 
 
+  late bool _passwordShowHide;
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _passwordShowHide = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -49,7 +59,7 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 40,),
               TextFormField(
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.black
                 ),
                 controller: firstName,
                 decoration: InputDecoration(
@@ -84,7 +94,7 @@ class _SignUpState extends State<SignUp> {
               SizedBox(height: 15,),
               TextFormField(
                 style: TextStyle(
-                    color: Colors.white
+                    color: Colors.black
                 ),
                 controller: lastName,
                 decoration: InputDecoration(
@@ -193,6 +203,7 @@ class _SignUpState extends State<SignUp> {
                 style: TextStyle(
                     color: Colors.black
                 ),
+                obscureText: _passwordShowHide,
                 controller: password,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -210,9 +221,13 @@ class _SignUpState extends State<SignUp> {
                     fillColor: AppColors.white,
                     filled: true,
                     hintText: "Password",
-                    suffixIcon: Icon(
-                      Icons.remove_red_eye,
-                      color: AppColors.black,
+                    suffixIcon: IconButton(
+                      onPressed: ()=>setState(() => _passwordShowHide = !_passwordShowHide),
+                      icon: Icon(
+                        _passwordShowHide ?  Icons.visibility_off : Icons
+                            .visibility,
+                        color: AppColors.black,
+                      ),
                     ),
                     hintStyle: TextStyle(
                       color: AppColors.black,
@@ -236,6 +251,7 @@ class _SignUpState extends State<SignUp> {
                 style: TextStyle(
                     color: Colors.black
                 ),
+                obscureText: _passwordShowHide,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
@@ -252,9 +268,13 @@ class _SignUpState extends State<SignUp> {
                     fillColor: AppColors.white,
                     filled: true,
                     hintText: "Confirm Password",
-                    suffixIcon: Icon(
-                      Icons.remove_red_eye,
-                      color: AppColors.black,
+                    suffixIcon: IconButton(
+                      onPressed: ()=>setState(() => _passwordShowHide = !_passwordShowHide),
+                      icon: Icon(
+                        _passwordShowHide ?  Icons.visibility_off : Icons
+                            .visibility,
+                        color: AppColors.black,
+                      ),
                     ),
                     hintStyle: TextStyle(
                       color: AppColors.black,

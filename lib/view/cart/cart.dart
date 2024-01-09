@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:resturentapp/controller/orderController.dart';
+import 'package:resturentapp/controller/restaruant_controller.dart';
+import 'package:resturentapp/model/menuModel.dart';
+import 'package:resturentapp/model/quote_model.dart';
 import 'package:resturentapp/utility/appConst.dart';
 import 'package:resturentapp/utility/colors.dart';
 import 'package:resturentapp/view/address/address_add.dart';
@@ -29,6 +35,7 @@ class _CartState extends State<Cart> {
   final _couponCode = TextEditingController();
   final _additionlInfo = TextEditingController();
 
+  List<Map<String, dynamic>> orderListItem = [];
 
 
   @override
@@ -36,23 +43,59 @@ class _CartState extends State<Cart> {
     // TODO: implement initState
     super.initState();
     dataList =  HiveCartController.cartBox.values.toList();
-    calculateTotal();
+    _calculateTotal();
+    _selectedCartItems();
+    _getRestaurantDetails();
+  }
+
+  ///===== get restaurant details =====//
+  var resName, resPhoneNUmber, resAddress, doordash_external_store_id;
+  void _getRestaurantDetails()async{
+    var res = await RestaurantController.getRestaurantDetails();
+    setState(() {
+      resName = res.restaurantName!;
+      resPhoneNUmber = res.phone! ?? "+17784322111";
+      resAddress = res.details!;
+      doordash_external_store_id = res.doordashExternalStoreId!;
+    });
   }
 
   //amount carculating variables
   double _subTotal = 0.00;
   double _totalAmount = 0.00;
-  double _serviceFee = 0.29;
-  double _estimatedTax = 0.88;
+  double _serviceFee = 0.0;
+  double _estimatedTax = 0.0;
   double _deliveryFee = 0.00;
   double _discount = 0.00;
 
   //selected address
-  var selectedAddress;
+  QuoteCreateModel? _quoteCreateModel;
   var selectedPaymentMethod;
 
 
-   calculateTotal() {
+  ///========= calculate the total price ======///
+  ///TODO:: we need some loading, until this function successfully run
+  void _selectedCartItems()async{
+    for(var i in dataList){
+      setState(() {
+        orderListItem.add(
+            {
+              "menu_item": i.id,
+              "quantity": i.qty,
+              "modifiers": [
+              ]
+            }
+          );
+      });
+    }
+  }
+
+  ///========= calculate the total price ======///
+  var token;
+  void _calculateTotal() async{
+
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    setState((){ token = _pref.getString("token");});
     double total = 0;
     if(dataList.isNotEmpty){
       for (var item in dataList) {
@@ -64,6 +107,7 @@ class _CartState extends State<Cart> {
 
     //total
     _totalAmount = (_subTotal + _serviceFee + _estimatedTax + _deliveryFee);
+
     setState(() {});
   }
 
@@ -146,7 +190,7 @@ class _CartState extends State<Cart> {
                         ),
                       ),
                       const SizedBox(height: 5,),
-                      Text("${dataList[0].resName}",
+                      Text("${resName ?? ""}",
                         style: TextStyle(
                             fontWeight: FontWeight.w300,
                             fontSize: 18,
@@ -341,7 +385,9 @@ class _CartState extends State<Cart> {
                       ),
                       SizedBox(width: 10,),
                       InkWell(
-                        onTap: ()=>goToCouponScreen(),     // here location id is static now.
+                        onTap: ()=> token != null ? goToCouponScreen() : NotLoginPoup(),
+                        // here location
+                        // id is static now.
                         child: Container(
                           width: 150,
                           height:55,
@@ -421,21 +467,40 @@ class _CartState extends State<Cart> {
                             padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(5),
-                              border: Border.all(width: 1, color: Colors.grey.shade200)
+                              border: Border.all(width: 1, color: _quoteCreateModel != null ? Colors.green : Colors.grey.shade200)
                             ),
                             child:  Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text( selectedAddress ?? "1425 Golden Ranch",
+                               _quoteCreateModel == null
+                                   ? Text("Select delivery address",
                                   style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 14,
                                       color: Colors.black
                                   ),
-                                ),
+                                )
+                                   : Text("${_quoteCreateModel!.dropoffAddress!}",
+                                 style: TextStyle(
+                                     fontWeight: FontWeight.normal,
+                                     fontSize: 14,
+                                     color: Colors.black
+                                 ),
+                               ),
                                 InkWell(
-                                  onTap: ()=>goToAddressScreen(),
-                                  child: Text("Edit",
+                                  onTap: ()=> token != null
+                                      ? goToAddressScreen()
+                                      : NotLoginPoup() ,
+                                  child: _quoteCreateModel == null
+                                      ?  Text
+                                    ("Add New",
+                                    style: TextStyle(
+                                      color: AppColors.mainColor,
+                                      fontSize: 15,
+                                    ),
+                                  )
+                                        : Text
+                                    ("Edit",
                                     style: TextStyle(
                                       color: AppColors.mainColor,
                                       fontSize: 15,
@@ -523,7 +588,7 @@ class _CartState extends State<Cart> {
             ),
           ),
           bottomNavigationBar:  InkWell(
-            onTap: ()=>makePaymentMethod(),
+            onTap: ()=>_quoteCreateModel != null ? makePaymentMethod() : deliveryLocationRequired(),
             child: Container(
               width: double.infinity,
               height: 60,
@@ -532,8 +597,8 @@ class _CartState extends State<Cart> {
                   borderRadius: BorderRadius.circular(100),
                   color: AppColors.mainColor
               ),
-              child: const Center(
-                child: Text("Make Payment",
+              child:  Center(
+                child: isPlacingOrder ? CircularProgressIndicator(color: Colors.white,) : Text("Make Payment",
                   style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.w200,
@@ -548,89 +613,79 @@ class _CartState extends State<Cart> {
     );
   }
 
-  ///=================== decriment ==============//
-  List isDeletingIndex = [];
-  void decriment(index) {
-    if(int.parse("${dataList[index].qty}") > 1){
-      HiveCartController.cartBox.putAt(index, HiveCartModel("${dataList[index].id.toString()}", "${dataList[index].name.toString()}", "${int.parse("${dataList[index].qty}")-1}", "${dataList[index].image}", "${dataList[index].price}", "${dataList[index].resid}", "${dataList[index].resName}" ) );
-      dataList =  HiveCartController.cartBox.values.toList();
-      calculateTotal();
-      setState(() {});
-    }else {
-      setState(() =>isDeletingIndex.add(index));
-      Future.delayed(Duration(milliseconds: 500), () {
-        // 5s over, navigate to a new page
-        HiveCartController.cartBox.deleteAt(index);
-        dataList =  HiveCartController.cartBox.values.toList();
-        calculateTotal();
-        setState(() =>isDeletingIndex.remove(index));
-      });
-
-    }
+  ///====== not login =====///
+  void NotLoginPoup(){
+    Get.defaultDialog(
+        titlePadding: EdgeInsets.zero,
+        //contentPadding: EdgeInsets.only(left: 30, right: ),
+        title: "",
+        titleStyle: TextStyle(fontSize: 0),
+        content: Column(
+          children: [
+            Image.asset(
+              AppConst.noLogin,
+              height: 100,
+              width: 100,
+            ),
+            SizedBox(
+                width: 200,
+                child: Center(
+                    child: const Text(
+                      "You need to login first to placing order.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black),
+                    ))),
+            SizedBox(
+              height: 30,
+            ),
+            InkWell(
+              onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context)=>Login(), settings: RouteSettings(arguments: {"no registror"})) ),
+              child: Container(
+                width: 120,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: Color(0xffc54500),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Center(
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        fontSize: 15),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ));
   }
 
-  ///=================== increment ==============//
-  incriment(index) {
-      HiveCartController.cartBox.putAt(index, HiveCartModel("${dataList[index].id.toString()}", "${dataList[index].name.toString()}", "${int.parse("${dataList[index].qty}")+1}", "${dataList[index].image}", "${dataList[index].price}","${dataList[index].resid}", "${dataList[index].resName}") );
-      dataList =  HiveCartController.cartBox.values.toList();
-      calculateTotal();
-      setState(() {});
-    }
-
-    //navigator to the coupon list screen
-  goToCouponScreen() async{
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>CouponList(resId: dataList[0]!.resid!, locationId: AppConst.LOCATON_ID, totalAmount: _totalAmount)));
-    if(result != null){
-      setState(() {
-        _couponCode.text = result["voucherCode"]; //assign the value that get from coupon pages
-        _discount = double.parse("${result["amount"]}"); //assign the value that get from coupon pages
-        //now calulating the cart price with discount
-        _totalAmount = _totalAmount - 30.00;
-      });
-      AlertController.snackBar(text: "You get CA\$${result["amount"]} discount.", context: context, bg: Colors.green);
-    }
-
-  }
-
-  //this method for navigate to the Address Screen
-  goToAddressScreen() async{
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>AddressAdd()));
-    if(result != null){
-      setState(() {
-        selectedAddress = result; //assign the value that get from coupon pages
-      });
-    }
-  }
-
-  //this method for navigate to the payment Screen
-  goToPaymentScreen() async{
-    var result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentMethodList()));
-    if(result != null){
-      setState(() {
-        selectedPaymentMethod = hideAndRevealCharacters(result); //assign the value that get from coupon pages
-      });
-    }
-  }
-  //hide after first 4
-  String hideAndRevealCharacters(String input) {
-    if (input.length <= 4) {
-      return input;
-    }
-
-    String hiddenPart = '*' * (input.length - 4);
-    String revealedPart = input.substring(input.length - 4);
-
-    return "${input.substring(0, 4)}$hiddenPart$revealedPart";
-  }
-
-
+  ///===== make payment ====///
   //make payment method
- void makePaymentMethod() async{
+  bool isPlacingOrder = false;
+  void makePaymentMethod() async{
+    setState(() => isPlacingOrder = true);
     SharedPreferences _pref = await SharedPreferences.getInstance();
     var token = _pref.getString("token"); //store the login token
     if(token != null){//check it have token or not/ if token have then user can place order
-      HiveCartController.cartBox.clear(); //when place order it done, the hive database will be clear;
-      Get.to(OrderPlaceSuccess(), transition: Transition.rightToLeft); //after placing order, its go to the success page.
+      var createStripIntentResponse = await OrderController.placeOrderWithStrip(quoteCreateModel: _quoteCreateModel!, resId: "101", locationId: "56");
+      if(createStripIntentResponse.statusCode == 200){
+        await OrderController.makePaymentWithStrip(context: context, currency: _quoteCreateModel!.currency!.toString(), price: _quoteCreateModel!.costs!.total!, resName: resName, secretKey: jsonDecode(createStripIntentResponse.body)["clientSecret"]);
+        HiveCartController.cartBox.clear(); //when place order it done, the hive database will be clear;
+      }else{
+        ScaffoldMessenger.of(context)
+            .showSnackBar( SnackBar(
+          backgroundColor: Colors.red,
+          duration: Duration(milliseconds: 3000),
+          content: Text("Something went wrong. Please try again."),));
+        setState(() => isPlacingOrder = false);
+
+      }
+
     }else{
       Get.defaultDialog(
           titlePadding: EdgeInsets.zero,
@@ -679,9 +734,154 @@ class _CartState extends State<Cart> {
               )
             ],
           ));
+      setState(() => isPlacingOrder = false);
+    }
+    setState(() => isPlacingOrder = false);
+
+
+  }
+
+
+  ///=================== decriment ==============//
+  List isDeletingIndex = [];
+  void decriment(index) {
+    if(int.parse("${dataList[index].qty}") > 1){
+      HiveCartController.cartBox.putAt(index, HiveCartModel("${dataList[index].id.toString()}", "${dataList[index].name.toString()}", "${int.parse("${dataList[index].qty}")-1}", "${dataList[index].image}", "${dataList[index].price}", "${dataList[index].resid}", "${dataList[index].resName}" ) );
+      dataList =  HiveCartController.cartBox.values.toList();
+      _calculateTotal();
+      setState(() {});
+    }else {
+      setState(() =>isDeletingIndex.add(index));
+      Future.delayed(Duration(milliseconds: 500), () {
+        // 5s over, navigate to a new page
+        HiveCartController.cartBox.deleteAt(index);
+        dataList =  HiveCartController.cartBox.values.toList();
+        _calculateTotal();
+        setState(() =>isDeletingIndex.remove(index));
+      });
+
+    }
+  }
+
+  ///=================== increment ==============//
+  incriment(index) {
+      HiveCartController.cartBox.putAt(index, HiveCartModel("${dataList[index].id.toString()}", "${dataList[index].name.toString()}", "${int.parse("${dataList[index].qty}")+1}", "${dataList[index].image}", "${dataList[index].price}","${dataList[index].resid}", "${dataList[index].resName}") );
+      dataList =  HiveCartController.cartBox.values.toList();
+      _calculateTotal();
+      setState(() {});
     }
 
-}
+    //navigator to the coupon list screen
+  goToCouponScreen() async{
+    var result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>CouponList(resId: dataList[0]!.resid!, locationId: AppConst.LOCATON_ID, totalAmount: _totalAmount)));
+    if(result != null){
+      setState(() {
+        _couponCode.text = result["voucherCode"]; //assign the value that get from coupon pages
+        _discount = double.parse("${result["amount"]}"); //assign the value that get from coupon pages
+        //now calulating the cart price with discount
+        _totalAmount = _totalAmount - 30.00;
+      });
+      AlertController.snackBar(text: "You get CA\$${result["amount"]} discount.", context: context, bg: Colors.green);
+    }
+
+  }
+
+  //this method for navigate to the Address Screen
+  goToAddressScreen() async{
+    var result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>AddressAdd(pickup_address:resAddress, pickup_phone_number: resPhoneNUmber, pickup_external_store_id: doordash_external_store_id, order_items: orderListItem, resturentname: resName)));
+    if(result != null){
+      setState(() {
+        _quoteCreateModel = result; //assign the value that get from coupon pages
+        _deliveryFee = _quoteCreateModel!.costs!.deliveryFee!;
+        _discount = _quoteCreateModel!.costs!.discount!;
+        _estimatedTax = _quoteCreateModel!.costs!.tax!;
+        _serviceFee = _quoteCreateModel!.fee!;
+        _totalAmount = (_subTotal + _serviceFee + _estimatedTax + _deliveryFee);
+      });
+      print("_quoteCreateModel === ${_quoteCreateModel?.dropoffAddress!}");
+    }
+  }
+
+  //this method for navigate to the payment Screen
+  goToPaymentScreen() async{
+    var result = await Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentMethodList()));
+    if(result != null){
+      setState(() {
+        selectedPaymentMethod = hideAndRevealCharacters(result); //assign the value that get from coupon pages
+      });
+    }
+  }
+  //hide after first 4
+  String hideAndRevealCharacters(String input) {
+    if (input.length <= 4) {
+      return input;
+    }
+
+    String hiddenPart = '*' * (input.length - 4);
+    String revealedPart = input.substring(input.length - 4);
+
+    return "${input.substring(0, 4)}$hiddenPart$revealedPart";
+  }
+
+
+  //////=============== if user not select address, then show a popup for adding address ==========//
+  void deliveryLocationRequired() {
+    Get.defaultDialog(
+        titlePadding: EdgeInsets.zero,
+        //contentPadding: EdgeInsets.only(left: 30, right: ),
+        title: "",
+        titleStyle: TextStyle(fontSize: 0),
+        content: Column(
+          children: [
+            Image.asset(
+              "assets/images/no_cart.png",
+              height: 100,
+              width: 100,
+            ),
+            SizedBox(
+                width: 200,
+                child: Center(
+                    child: const Text(
+                      "Please select delivery address.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black),
+                    ))),
+            SizedBox(
+              height: 30,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: AppColors.mainColor,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Center(
+                      child: Text(
+                        "OK",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 15),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ));
+  }
+
+
+
 
 
 }
