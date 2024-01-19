@@ -15,7 +15,12 @@ class PersonalInfo extends StatefulWidget {
 }
 
 class _PersonalInfoState extends State<PersonalInfo> {
+  final _changePasswordKey = GlobalKey<FormState>();
+
   final name = TextEditingController();
+  final password = TextEditingController();
+  final Cpassword = TextEditingController();
+  final current_password = TextEditingController();
 
   getUserInfo()async{
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -208,109 +213,151 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                TextFormField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                Form(
+                  key: _changePasswordKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: current_password,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                            ),
+                            fillColor: AppColors.white,
+                            filled: true,
+                            hintText: "Current Password",
+                            suffixIcon: Icon(
+                              Icons.remove_red_eye,
+                              color: AppColors.mainColor,
+                            ),
+                            hintStyle: TextStyle(
+                              color: AppColors.mainColor,
+                            ),
+                            contentPadding: EdgeInsets.only(left: 20, right: 20,)
+                        ),
+                        validator: (v){
+                          if(v!.isEmpty){
+                            return "Password must not be empty.";
+                          }else{
+                            return null;
+                          }
+                        },
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                      SizedBox(height: 10,),
+                      TextFormField(
+                        controller: password,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(100),
+                            borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                          ),
+                          fillColor: AppColors.white,
+                          filled: true,
+                          hintText: "New Password",
+                          suffixIcon: Icon(
+                            Icons.remove_red_eye,
+                            color: AppColors.mainColor,
+                          ),
+                          hintStyle: TextStyle(
+                            color: AppColors.mainColor,
+                          ),
+                          contentPadding: EdgeInsets.only(left: 20, right: 20,),
+
+                        ),
+                        validator: (v){
+                          if(v!.isEmpty){
+                            return "Password must not be empty.";
+                          }else if(v!.isNumericOnly){
+                            return "Only numeric not allow. Please try to Alpha & Numeric both.";
+                          }else if(v!.length <= 8){
+                            return "Password must be 8 character or more.";
+                          }else{
+                            return null;
+                          }
+                        },
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                      SizedBox(height: 10,),
+                      TextFormField(
+                        controller: Cpassword,
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(100),
+                              borderSide:BorderSide(width: 1, color: AppColors.mainColor),
+                            ),
+                            fillColor: AppColors.white,
+                            filled: true,
+                            hintText: "Confirm New Password",
+                            suffixIcon: Icon(
+                              Icons.remove_red_eye,
+                              color: AppColors.mainColor,
+                            ),
+                            hintStyle: TextStyle(
+                              color: AppColors.mainColor,
+                            ),
+                            contentPadding: EdgeInsets.only(left: 20, right: 20,)
+                        ),
+                        validator: (v){
+                          if(v!.isEmpty){
+                            return "Confirm password must not be empty.";
+                          }else if(v != password.text){
+                            return "Confirm password doesn't same.";
+                          }else{
+                            return null;
+                          }
+                        },
                       ),
-                      fillColor: AppColors.white,
-                      filled: true,
-                      hintText: "Current Password",
-                      suffixIcon: Icon(
-                        Icons.remove_red_eye,
-                        color: AppColors.mainColor,
-                      ),
-                      hintStyle: TextStyle(
-                        color: AppColors.mainColor,
-                      ),
-                      contentPadding: EdgeInsets.only(left: 20, right: 20,)
+                    ],
                   ),
                 ),
-                SizedBox(height: 10,),
-                TextFormField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
-                      ),
-                      fillColor: AppColors.white,
-                      filled: true,
-                      hintText: "New Password",
-                      suffixIcon: Icon(
-                        Icons.remove_red_eye,
-                        color: AppColors.mainColor,
-                      ),
-                      hintStyle: TextStyle(
-                        color: AppColors.mainColor,
-                      ),
-                      contentPadding: EdgeInsets.only(left: 20, right: 20,)
-                  ),
-                ),
-                SizedBox(height: 10,),
-                TextFormField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(100),
-                        borderSide:BorderSide(width: 1, color: AppColors.mainColor),
-                      ),
-                      fillColor: AppColors.white,
-                      filled: true,
-                      hintText: "Confirm New Password",
-                      suffixIcon: Icon(
-                        Icons.remove_red_eye,
-                        color: AppColors.mainColor,
-                      ),
-                      hintStyle: TextStyle(
-                        color: AppColors.mainColor,
-                      ),
-                      contentPadding: EdgeInsets.only(left: 20, right: 20,)
-                  ),
-                ),
+
                 SizedBox(height: 20,),
-                Container(
-                  width: 150,
-                  height: 40,
-                  decoration: BoxDecoration(
-                      color: Color(0xffE4C1F9),
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey.shade300,
-                            blurRadius: 4,
-                            spreadRadius: 3
-                        )
-                      ]
-                  ),
-                  child: Center(
-                    child: Text("Change Password",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15
+                InkWell(
+                  onTap: ()=>changePassword(),
+                  child: Container(
+                    width: 150,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: Color(0xffE4C1F9),
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey.shade300,
+                              blurRadius: 4,
+                              spreadRadius: 3
+                          )
+                        ]
+                    ),
+                    child: Center(
+                      child: Text("Change Password",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15
+                        ),
                       ),
                     ),
                   ),
@@ -352,5 +399,28 @@ class _PersonalInfoState extends State<PersonalInfo> {
         ),
       ),
     );
+  }
+
+  bool isChangingPass = false;
+  void changePassword() async{
+
+    if(_changePasswordKey.currentState!.validate()){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Something went wrong with APIs."),
+        backgroundColor: Colors.red,
+        duration: Duration(milliseconds: 3000),
+      ));
+    }
+
+
+
+    ///TODO: after checking apis uncomment this.
+    //
+    // setState(() =>isChangingPass = true);
+    // var res = await AuthController.changePassword(oldPass: current_password.text, newPass: password.text);
+    // if(res.statusCode == 200){
+    //   //
+    // }
+    // setState(() =>isChangingPass = false);
   }
 }

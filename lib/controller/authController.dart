@@ -24,6 +24,21 @@ class AuthController{
     return response;
   }
 
+  //change password
+  static Future<http.Response> changePassword({required String oldPass, required String newPass})async{
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    var token = _pref.getString("token");
+    var data = {
+        "old_password": oldPass,
+        "password": newPass
+    };
+    var res = await http.post(Uri.parse(AppConfig.CHANGE_PASSWORD),
+      body: jsonEncode(data)
+    );
+
+    return res; 
+  }
+
   /////////// SIGNIN //////////////
   static Future<http.Response> singnIn({
     required Map<String, dynamic> data,
@@ -42,6 +57,7 @@ class AuthController{
     }
     return response;
   }
+
 
 
 

@@ -54,7 +54,7 @@ class Links {
 
 class Result {
   final int? id;
-  final List<Duration>? durations;
+  final List<CouponDuration>? durations;
   final int? company;
   final String? restaurantName;
   final String? locationName;
@@ -89,7 +89,7 @@ class Result {
 
   factory Result.fromJson(Map<String, dynamic> json) => Result(
     id: json["id"],
-    durations: json["durations"] == null ? [] : List<Duration>.from(json["durations"]!.map((x) => Duration.fromJson(x))),
+    durations: json["durations"] == null ? [] : List<CouponDuration>.from(json["durations"]!.map((x) => CouponDuration.fromJson(x))),
     company: json["company"],
     restaurantName: json["restaurant_name"],
     locationName: json["location_name"],
@@ -124,14 +124,14 @@ class Result {
   };
 }
 
-class Duration {
+class CouponDuration {
   final int? id;
   final DateTime? createdDate;
   final DateTime? modifiedDate;
   final DateTime? startDate;
   final DateTime? endDate;
 
-  Duration({
+  CouponDuration({
     this.id,
     this.createdDate,
     this.modifiedDate,
@@ -139,7 +139,7 @@ class Duration {
     this.endDate,
   });
 
-  factory Duration.fromJson(Map<String, dynamic> json) => Duration(
+  factory CouponDuration.fromJson(Map<String, dynamic> json) => CouponDuration(
     id: json["id"],
     createdDate: json["created_date"] == null ? null : DateTime.parse(json["created_date"]),
     modifiedDate: json["modified_date"] == null ? null : DateTime.parse(json["modified_date"]),

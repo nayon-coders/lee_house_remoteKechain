@@ -22,7 +22,9 @@ import '../../viewController/sidebysideText.dart';
 
 
 class Cart extends StatefulWidget {
-  const Cart({Key? key}) : super(key: key);
+  final dynamic couponAmount;
+  final dynamic couponCode;
+  const Cart({Key? key, this.couponAmount, this.couponCode}) : super(key: key);
 
   @override
   State<Cart> createState() => _CartState();
@@ -42,6 +44,12 @@ class _CartState extends State<Cart> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(widget.couponCode != null && widget.couponAmount != null){
+      setState(() {
+        _couponCode.text = widget.couponCode.toString();
+        _discount = widget.couponAmount;
+      });
+    }
     dataList =  HiveCartController.cartBox.values.toList();
     _calculateTotal();
     _selectedCartItems();
@@ -673,6 +681,10 @@ class _CartState extends State<Cart> {
     var token = _pref.getString("token"); //store the login token
     if(token != null){//check it have token or not/ if token have then user can place order
       var createStripIntentResponse = await OrderController.placeOrderWithStrip(quoteCreateModel: _quoteCreateModel!, resId: "101", locationId: "56");
+      print("createStripIntentResponse === ${createStripIntentResponse
+          .statusCode}");
+      print("createStripIntentResponse === ${createStripIntentResponse
+          .body}");
       if(createStripIntentResponse.statusCode == 200){
         await OrderController.makePaymentWithStrip(context: context, currency: _quoteCreateModel!.currency!.toString(), price: _quoteCreateModel!.costs!.total!, resName: resName, secretKey: jsonDecode(createStripIntentResponse.body)["clientSecret"]);
         HiveCartController.cartBox.clear(); //when place order it done, the hive database will be clear;

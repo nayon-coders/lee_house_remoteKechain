@@ -239,8 +239,8 @@ class _SignUpState extends State<SignUp> {
                     return "Password must not be empty.";
                   }else if(v!.isNumericOnly){
                     return "Only numeric not allow. Please try to Alpha & Numeric both.";
-                  }else if(v!.length>9){
-                    return "Password must be 8 charter or more.";
+                  }else if(v!.length <= 8){
+                    return "Password must be 8 character or more.";
                   }else{
                     return null;
                   }

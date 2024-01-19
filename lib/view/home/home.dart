@@ -62,43 +62,43 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(height: 20,),
             ///TODO: its comment out for Hui-Lau shan mobile app, we upcomment when it usefull
-            // ListTile(
-            //   leading: Icon(Icons.home_filled,
-            //     size: 50,
-            //     color: AppColors.mainColor,
-            //   ),
-            //   title: Text("Address",
-            //     style: TextStyle(
-            //         fontSize: 22,
-            //         fontWeight: FontWeight.w600
-            //     ),
-            //   ),
-            //   subtitle: Text("123 Main Street, Cityville, State 12345, United States",
-            //     style: TextStyle(
-            //         fontSize: 17,
-            //         fontWeight: FontWeight.w400
-            //     ),
-            //   ),
-            // ),
-            // SizedBox(height: 10,),
-            // const ListTile(
-            //   leading: Icon(Icons.home_filled,
-            //     size: 50,
-            //     color: AppColors.mainColor,
-            //   ),
-            //   title: Text("Opening Hours",
-            //     style: TextStyle(
-            //         fontSize: 22,
-            //         fontWeight: FontWeight.w600
-            //     ),
-            //   ),
-            //   subtitle: Text("Monday-Friday 10:00 PM - 8:00 PM",
-            //     style: TextStyle(
-            //         fontSize: 17,
-            //         fontWeight: FontWeight.w400
-            //     ),
-            //   ),
-            // ),
+            ListTile(
+              leading: Icon(Icons.home_filled,
+                size: 50,
+                color: AppColors.mainColor,
+              ),
+              title: Text("Address",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600
+                ),
+              ),
+              subtitle: Text("3994  shelbourne Victoria British Columbia V8N 3E2 Canada",
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w400
+                ),
+              ),
+            ),
+            SizedBox(height: 10,),
+            const ListTile(
+              leading: Icon(Icons.home_filled,
+                size: 50,
+                color: AppColors.mainColor,
+              ),
+              title: Text("Opening Hours",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600
+                ),
+              ),
+              subtitle: Text("Monday-Friday 10:00 PM - 8:00 PM",
+                style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w400
+                ),
+              ),
+            ),
             Container(
               width: size.width,
               padding: EdgeInsets.all(20),

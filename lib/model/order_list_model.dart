@@ -33,7 +33,7 @@ class OrderListModel {
 }
 
 class Links {
-  final String? next;
+  final dynamic next;
   final dynamic previous;
 
   Links({
@@ -55,40 +55,40 @@ class Links {
 class OrderListResult {
   final int? id;
   final List<OrderitemSet>? orderitemSet;
-  final String? voucher;
+  final dynamic voucher;
   final DateTime? createdDate;
   final DateTime? modifiedDate;
-  final Customer? customer;
+  final String? customer;
   final String? orderId;
-  final Status? status;
+  final String? status;
   final int? quantity;
   final double? subtotal;
-  final int? deliveryFee;
+  final double? deliveryFee;
   final double? tax;
-  final int? convenienceFee;
+  final double? convenienceFee;
   final double? discount;
   final double? total;
-  final int? tips;
-  final Currency? currency;
+  final double? tips;
+  final String? currency;
   final bool? isPaid;
   final DateTime? receiveDate;
-  final DateTime? pickupTime;
-  final DateTime? deliveryTime;
-  final DeliveryPlatform? deliveryPlatform;
-  final PickupAddress? pickupAddress;
+  final dynamic pickupTime;
+  final dynamic deliveryTime;
+  final String? deliveryPlatform;
+  final String? pickupAddress;
   final String? dropoffAddress;
   final DropoffLocation? dropoffLocation;
   final String? dropoffPhoneNumber;
-  final DropoffContactFirstName? dropoffContactFirstName;
-  final DropoffContactLastName? dropoffContactLastName;
+  final String? dropoffContactFirstName;
+  final String? dropoffContactLastName;
   final String? trackingUrl;
   final String? supportReference;
   final String? cancellationReason;
-  final OrderMethod? orderMethod;
-  final SchedulingType? schedulingType;
+  final String? orderMethod;
+  final String? schedulingType;
   final dynamic scheduledTime;
   final DropoffLocation? extra;
-  final OrderType? orderType;
+  final String? orderType;
   final int? user;
   final int? company;
   final int? restaurant;
@@ -153,37 +153,37 @@ class OrderListResult {
     voucher: json["voucher"],
     createdDate: json["created_date"] == null ? null : DateTime.parse(json["created_date"]),
     modifiedDate: json["modified_date"] == null ? null : DateTime.parse(json["modified_date"]),
-    customer: customerValues.map[json["customer"]]!,
+    customer: json["customer"],
     orderId: json["order_id"],
-    status: statusValues.map[json["status"]]!,
+    status: json["status"],
     quantity: json["quantity"],
     subtotal: json["subtotal"]?.toDouble(),
-    deliveryFee: json["delivery_fee"],
-    tax: json["tax"]?.toDouble(),
+    deliveryFee: json["delivery_fee"]?.toDouble(),
+    tax: json["tax"],
     convenienceFee: json["convenience_fee"],
-    discount: json["discount"]?.toDouble(),
+    discount: json["discount"],
     total: json["total"]?.toDouble(),
     tips: json["tips"],
-    currency: currencyValues.map[json["currency"]]!,
+    currency: json["currency"],
     isPaid: json["is_paid"],
     receiveDate: json["receive_date"] == null ? null : DateTime.parse(json["receive_date"]),
-    pickupTime: json["pickup_time"] == null ? null : DateTime.parse(json["pickup_time"]),
-    deliveryTime: json["delivery_time"] == null ? null : DateTime.parse(json["delivery_time"]),
-    deliveryPlatform: deliveryPlatformValues.map[json["delivery_platform"]]!,
-    pickupAddress: pickupAddressValues.map[json["pickup_address"]]!,
+    pickupTime: json["pickup_time"],
+    deliveryTime: json["delivery_time"],
+    deliveryPlatform: json["delivery_platform"],
+    pickupAddress: json["pickup_address"],
     dropoffAddress: json["dropoff_address"],
     dropoffLocation: json["dropoff_location"] == null ? null : DropoffLocation.fromJson(json["dropoff_location"]),
     dropoffPhoneNumber: json["dropoff_phone_number"],
-    dropoffContactFirstName: dropoffContactFirstNameValues.map[json["dropoff_contact_first_name"]]!,
-    dropoffContactLastName: dropoffContactLastNameValues.map[json["dropoff_contact_last_name"]]!,
+    dropoffContactFirstName: json["dropoff_contact_first_name"],
+    dropoffContactLastName: json["dropoff_contact_last_name"],
     trackingUrl: json["tracking_url"],
     supportReference: json["support_reference"],
     cancellationReason: json["cancellation_reason"],
-    orderMethod: orderMethodValues.map[json["order_method"]]!,
-    schedulingType: schedulingTypeValues.map[json["scheduling_type"]]!,
+    orderMethod: json["order_method"],
+    schedulingType: json["scheduling_type"],
     scheduledTime: json["scheduled_time"],
     extra: json["extra"] == null ? null : DropoffLocation.fromJson(json["extra"]),
-    orderType: orderTypeValues.map[json["order_type"]]!,
+    orderType: json["order_type"],
     user: json["user"],
     company: json["company"],
     restaurant: json["restaurant"],
@@ -201,9 +201,9 @@ class OrderListResult {
     "voucher": voucher,
     "created_date": createdDate?.toIso8601String(),
     "modified_date": modifiedDate?.toIso8601String(),
-    "customer": customerValues.reverse[customer],
+    "customer": customer,
     "order_id": orderId,
-    "status": statusValues.reverse[status],
+    "status": status,
     "quantity": quantity,
     "subtotal": subtotal,
     "delivery_fee": deliveryFee,
@@ -212,26 +212,26 @@ class OrderListResult {
     "discount": discount,
     "total": total,
     "tips": tips,
-    "currency": currencyValues.reverse[currency],
+    "currency": currency,
     "is_paid": isPaid,
     "receive_date": receiveDate?.toIso8601String(),
-    "pickup_time": pickupTime?.toIso8601String(),
-    "delivery_time": deliveryTime?.toIso8601String(),
-    "delivery_platform": deliveryPlatformValues.reverse[deliveryPlatform],
-    "pickup_address": pickupAddressValues.reverse[pickupAddress],
+    "pickup_time": pickupTime,
+    "delivery_time": deliveryTime,
+    "delivery_platform": deliveryPlatform,
+    "pickup_address": pickupAddress,
     "dropoff_address": dropoffAddress,
     "dropoff_location": dropoffLocation?.toJson(),
     "dropoff_phone_number": dropoffPhoneNumber,
-    "dropoff_contact_first_name": dropoffContactFirstNameValues.reverse[dropoffContactFirstName],
-    "dropoff_contact_last_name": dropoffContactLastNameValues.reverse[dropoffContactLastName],
+    "dropoff_contact_first_name": dropoffContactFirstName,
+    "dropoff_contact_last_name": dropoffContactLastName,
     "tracking_url": trackingUrl,
     "support_reference": supportReference,
     "cancellation_reason": cancellationReason,
-    "order_method": orderMethodValues.reverse[orderMethod],
-    "scheduling_type": schedulingTypeValues.reverse[schedulingType],
+    "order_method": orderMethod,
+    "scheduling_type": schedulingType,
     "scheduled_time": scheduledTime,
     "extra": extra?.toJson(),
-    "order_type": orderTypeValues.reverse[orderType],
+    "order_type": orderType,
     "user": user,
     "company": company,
     "restaurant": restaurant,
@@ -244,46 +244,6 @@ class OrderListResult {
   };
 }
 
-enum Currency {
-  USD
-}
-
-final currencyValues = EnumValues({
-  "usd": Currency.USD
-});
-
-enum Customer {
-  SOUMIK_ROY
-}
-
-final customerValues = EnumValues({
-  "Soumik Roy": Customer.SOUMIK_ROY
-});
-
-enum DeliveryPlatform {
-  DOORDASH
-}
-
-final deliveryPlatformValues = EnumValues({
-  "doordash": DeliveryPlatform.DOORDASH
-});
-
-enum DropoffContactFirstName {
-  SOUMIK
-}
-
-final dropoffContactFirstNameValues = EnumValues({
-  "Soumik": DropoffContactFirstName.SOUMIK
-});
-
-enum DropoffContactLastName {
-  ROY
-}
-
-final dropoffContactLastNameValues = EnumValues({
-  "Roy": DropoffContactLastName.ROY
-});
-
 class DropoffLocation {
   DropoffLocation();
 
@@ -294,27 +254,9 @@ class DropoffLocation {
   };
 }
 
-enum OrderMethod {
-  DELIVERY,
-  PICKUP
-}
-
-final orderMethodValues = EnumValues({
-  "delivery": OrderMethod.DELIVERY,
-  "pickup": OrderMethod.PICKUP
-});
-
-enum OrderType {
-  INTERNAL
-}
-
-final orderTypeValues = EnumValues({
-  "internal": OrderType.INTERNAL
-});
-
 class OrderitemSet {
   final int? id;
-  final ItemName? itemName;
+  final String? itemName;
   final List<dynamic>? modifiers;
   final DateTime? createdDate;
   final DateTime? modifiedDate;
@@ -335,7 +277,7 @@ class OrderitemSet {
 
   factory OrderitemSet.fromJson(Map<String, dynamic> json) => OrderitemSet(
     id: json["id"],
-    itemName: itemNameValues.map[json["item_name"]]!,
+    itemName: json["item_name"],
     modifiers: json["modifiers"] == null ? [] : List<dynamic>.from(json["modifiers"]!.map((x) => x)),
     createdDate: json["created_date"] == null ? null : DateTime.parse(json["created_date"]),
     modifiedDate: json["modified_date"] == null ? null : DateTime.parse(json["modified_date"]),
@@ -346,7 +288,7 @@ class OrderitemSet {
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "item_name": itemNameValues.reverse[itemName],
+    "item_name": itemName,
     "modifiers": modifiers == null ? [] : List<dynamic>.from(modifiers!.map((x) => x)),
     "created_date": createdDate?.toIso8601String(),
     "modified_date": modifiedDate?.toIso8601String(),
@@ -354,52 +296,4 @@ class OrderitemSet {
     "order": order,
     "menu_item": menuItem,
   };
-}
-
-enum ItemName {
-  CHOPPED_SALAD_SHIRAZI,
-  YELLOW_SPLIT_PEA_STEW
-}
-
-final itemNameValues = EnumValues({
-  "Chopped Salad(Shirazi)": ItemName.CHOPPED_SALAD_SHIRAZI,
-  "Yellow split pea stew": ItemName.YELLOW_SPLIT_PEA_STEW
-});
-
-enum PickupAddress {
-  THE_3994_SHELBOURNE_ST_103_B_VICTORIA_BC_V8_N_3_E2_CANADA
-}
-
-final pickupAddressValues = EnumValues({
-  "3994 Shelbourne St #103b, Victoria, BC V8N 3E2, Canada": PickupAddress.THE_3994_SHELBOURNE_ST_103_B_VICTORIA_BC_V8_N_3_E2_CANADA
-});
-
-enum SchedulingType {
-  ASAP
-}
-
-final schedulingTypeValues = EnumValues({
-  "asap": SchedulingType.ASAP
-});
-
-enum Status {
-  CANCELLED,
-  PENDING
-}
-
-final statusValues = EnumValues({
-  "cancelled": Status.CANCELLED,
-  "pending": Status.PENDING
-});
-
-class EnumValues<T> {
-  Map<String, T> map;
-  late Map<T, String> reverseMap;
-
-  EnumValues(this.map);
-
-  Map<T, String> get reverse {
-    reverseMap = map.map((k, v) => MapEntry(v, k));
-    return reverseMap;
-  }
 }

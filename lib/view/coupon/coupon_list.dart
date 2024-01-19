@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:resturentapp/controller/couponsController.dart';
+import 'package:resturentapp/local_storage/cart/car_hive_controller.dart';
+import 'package:resturentapp/local_storage/cart/cartmodel.dart';
 import 'package:resturentapp/model/couponsListModel.dart';
 import 'package:resturentapp/utility/colors.dart';
+import 'package:resturentapp/view/bottomNavigationBar/bottomNavigationBar.dart';
+import 'package:resturentapp/view/cart/cart.dart';
 import 'package:resturentapp/viewController/alertController.dart';
 import 'package:resturentapp/viewController/notFound.dart';
 
 class CouponList extends StatefulWidget {
+  final bool isComeFromCart;
   final String resId;
   final String locationId;
   final dynamic totalAmount;
-  const CouponList({Key? key, required this.resId, required this.locationId, this.totalAmount}) : super(key: key);
+  const CouponList({Key? key, required this.resId, required this.locationId, this.totalAmount, this.isComeFromCart = true}) : super(key: key);
 
   @override
   State<CouponList> createState() => _CouponListState();
@@ -19,11 +24,31 @@ class CouponList extends StatefulWidget {
 class _CouponListState extends State<CouponList> {
   //bool for terms
   bool isTerms = false;
+  List isHaveHiveCart = [];
+
+  var totalAmount;
+
+  List<HiveCartModel> dataList = [];
+  void getCartItemFromHive() async {
+    isHaveHiveCart.clear();
+    dataList = HiveCartController.cartBox.values.toList();
+    //getCartItemFromHive();
+    for (var i = 0; i < dataList.length; i++) {
+      setState(() {
+
+        totalAmount = double.parse("${dataList[i].price}");
+
+      });
+    }
+    print("isHaveHiveCart inis ===${isHaveHiveCart}");
+    print("isHaveHiveCart inis ===${totalAmount}");
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getCartItemFromHive();
     getCouponsList();////this is coupons method
   }
   @override
@@ -127,16 +152,51 @@ class _CouponListState extends State<CouponList> {
                             children: [
                               InkWell(
                                 onTap: (){
-                                    if(widget.totalAmount > couponsList![index].amount)  {
-                                      Navigator.pop(context, { "voucherCode" : "${couponsList![index]!.voucherCode}", "amount": "${couponsList![index]!.amount}",} );
-                                    }else{
-                                    AlertController.snackBar(text: "You need minimum  CA\$${couponsList![index].amount} to Redeem this coupon.", context: context, bg: Colors.red);
+                                  print("couponsList![index].amount == ${couponsList![index].amount}");
+                                  if(totalAmount != null) {
+                                    if (totalAmount > couponsList![index].amount) {
+                                      if(widget.isComeFromCart){
+                                        Navigator.pop(context, {
+                                          "voucherCode": "${couponsList![index]!
+                                              .voucherCode}",
+                                          "amount": "${couponsList![index]!
+                                              .amount}",
+                                        });
+                                      }else{
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>Cart(couponAmount: couponsList![index]!.amount, couponCode: couponsList![index]!.voucherCode,)));
+                                      }
+
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                                        content: Text("You need minimum  CA\$${couponsList![index]
+                                            .amount} to Redeem this coupon."),
+                                        backgroundColor: Colors.red,
+                                        action: SnackBarAction(
+                                          label: 'Go to menu',
+                                          textColor: Colors.white,
+                                          onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>AppBottomNavigationBar(pageIndex: 1,))),
+                                        ),
+                                        duration: Duration(milliseconds: 3000),
+                                      ));
+
+                                    }
+                                  }else{
+                                    ScaffoldMessenger.of(context).showSnackBar( SnackBar(
+                                      content: Text("Your Cart is empty. Go to menu and add to cart."),
+                                      backgroundColor: Colors.red,
+                                      action: SnackBarAction(
+                                        label: 'Go to menu',
+                                        textColor: Colors.white,
+                                        onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context)=>AppBottomNavigationBar(pageIndex: 1,))),
+                                      ),
+                                      duration: Duration(milliseconds: 3000),
+                                    ));
                                   }
                                  },
                                 child: Container(
                                   padding: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                      color: widget.totalAmount > couponsList![index].amount ? AppColors.secColor : AppColors.secColor.withOpacity(0.5),
+                                      color: totalAmount != null && totalAmount > couponsList![index].amount ? AppColors.secColor : AppColors.secColor.withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(5)
                                   ),
                                   child: Text("Redeem Now",

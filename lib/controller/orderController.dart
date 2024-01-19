@@ -50,7 +50,7 @@ class OrderController{
     var res = await http.post(Uri.parse(AppConfig.CREATE_QOUTE),
       headers: {
         "Content-Type": "application/json",
-        "Authorization" : "Bearer $token"
+        "Authorization" : "token $token"
       },
       body: jsonEncode(data)
     );
@@ -95,14 +95,14 @@ class OrderController{
       "dropoff_contact_first_name": quoteCreateModel!.dropoffContactGivenName.toString(),
       "dropoff_contact_last_name": quoteCreateModel!.dropoffContactFamilyName.toString(),
       "pickup_external_store_id": quoteCreateModel!.pickupExternalStoreId.toString(),
-    "restaurant": resId,
+      "restaurant": resId,
       "location": locationId
     };
 
     var res = await http.post(Uri.parse(AppConfig.STRIP_PAYMENT_METHOD),
         headers: {
           "Content-Type": "application/json",
-          "Authorization" : "Bearer $token"
+          "Authorization" : "token $token"
         },
         body: jsonEncode(data)
     );
@@ -123,13 +123,14 @@ class OrderController{
       } else {
         amount = '${price.toInt()}00';
       }
-       paymentIntent = await createPaymentIntent(amount, currency, context);
+       //paymentIntent = await createPaymentIntent(amount, currency, context);
 
-      print("paymentIntent?['client_secret'] === ${paymentIntent?['client_secret']}");
+      print("paymentIntent?['client_secret'] === ${secretKey}");
       //Payment Sheet
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: await paymentIntent?['client_secret'],
+          //paymentIntentClientSecret: await paymentIntent?['client_secret'],
+          paymentIntentClientSecret: secretKey,
           style: ThemeMode.dark,
           merchantDisplayName: resName,
         ),
@@ -244,10 +245,14 @@ class OrderController{
 
     var res = await http.get(Uri.parse(AppConfig.ORDER_LIST),
         headers: {
-          "Authorization" : "Bearer $token"
+          "Authorization" : "token $token",
+          "Content-Type" : 'application/json; charset=utf-8'
         },
     );
-    return OrderListModel.fromJson(jsonDecode(res.body));
+    final decodedBody = utf8.decode(res.bodyBytes);
+    print("res === ${res.statusCode}");
+    print("res === ${res.body}");
+    return OrderListModel.fromJson(jsonDecode(decodedBody));
   }
 
 

@@ -161,7 +161,7 @@ class _AfterLoginProfileState extends State<AfterLoginProfile> {
                      ProfileBoxs(
                        text: "My Coupons",
                        icon: Icons.wallet,
-                       onCick: ()=>Get.to(CouponList(resId: "2", locationId: "2"), transition: Transition.rightToLeft),
+                       onCick: ()=>Get.to(CouponList(resId: "2", locationId: "2", isComeFromCart: false,), transition: Transition.rightToLeft),
                      ),
                      SizedBox(width: 15,),
                      ProfileBoxs(
